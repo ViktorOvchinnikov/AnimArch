@@ -19,6 +19,14 @@ namespace Visualization.ClassDiagram
             ClassDiagramLoaderBase diagramLoader = new ClassDiagramLoaderBase();
             var parser = diagramLoader.LoadDiagram(AnimationData.Instance.GetDiagramPath());
             var classList = parser.ParseClasses() ?? new List<Class>();
+
+            var newClassList = new List<Class>();
+            foreach (Class currentClass in classList) {
+                Class newObject = currentClass.Copy();
+                newObject.Name += "2";
+                newClassList.Add(newObject);
+            }
+            classList.AddRange(newClassList);
             var relationList = parser.ParseRelations() ?? new List<Relation>();
             
             if (classList.Count == 0)
@@ -49,7 +57,6 @@ namespace Visualization.ClassDiagram
 
                 currentClass.Top *= -1;
             }
-
 
             foreach (var relation in relationList)
             {
@@ -85,7 +92,13 @@ namespace Visualization.ClassDiagram
                 var x = classInDiagram.ParsedClass.Left * 1.25f;
                 var y = classInDiagram.ParsedClass.Top * 1.25f;
                 var z = classInDiagram.VisualObject.GetComponent<RectTransform>().position.z;
+                if (classInDiagram.ParsedClass.Name[classInDiagram.ParsedClass.Name.Length - 1] == '2')
+                {
+                    x += 10;
+                    y += 10;
+                }
                 visualEditor.SetPosition(classInDiagram.ParsedClass.Name, new Vector3(x, y, z));
+
             }
         }
 

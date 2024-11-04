@@ -63,5 +63,25 @@ namespace Visualization.ClassDiagram.ClassComponents
         {
             return (Id != null ? Id.GetHashCode() : 0);
         }
+        public Class Copy()
+        {
+            return new Class
+            {
+                Name = this.Name,
+                Id = this.Id,
+                Visibility = this.Visibility,
+                NameSpc = this.NameSpc,
+                Geometry = this.Geometry,
+                Left = this.Left,
+                Right = this.Right,
+                Top = this.Top,
+                Bottom = this.Bottom,
+                Type = this.Type,
+                Attributes = this.Attributes != null ? new List<Attribute>(this.Attributes) : new List<Attribute>(), // Check for null
+                Methods = this.Methods != null ? new List<Method>(this.Methods) : new List<Method>(), // Check for null
+                HighlightSubject = this.HighlightSubject != null ? new ClassHighlightSubject() : null // Check for null or initialize as needed
+            };
+        }
+
     }
 }
