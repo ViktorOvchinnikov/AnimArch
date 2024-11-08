@@ -47,6 +47,11 @@ namespace Visualization.UI
             Color c= Color.black;
             Color m= Color.black;
             Color r= Color.black;
+
+            c = GetRandomColor();
+            m = GetRandomColor();
+            r = GetRandomColor();
+
             if (i == 0)
             {
                 ColorUtility.TryParseHtmlString("#2d334a", out bg);
@@ -80,6 +85,12 @@ namespace Visualization.UI
             SetColor(c, m, r);
             GameObject.Find("Main Camera").GetComponent<Camera>().backgroundColor = bg;
         }
+
+        private Color GetRandomColor()
+        {
+            return new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+        }
+
         public void SetPreset(string type)
         {
             SelectedPreset = type;

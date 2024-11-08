@@ -11,13 +11,15 @@ namespace Visualization.UI
         [SerializeField] private GameObject ButtonPlay;
         [SerializeField] private GameObject ButtonStop;
         [SerializeField] private GameObject ButtonPause;        
-        [SerializeField] private GameObject StepButton;        
+        [SerializeField] private GameObject StepButton;
+        MediatorColorSelectionPanel MediatorColorSelectionPanel;
 
         public override void OnClicked(GameObject gameObject)
         {
             if (ReferenceEquals(gameObject, ButtonPlay))
             {
-                OnPlayBtnClicked();
+                MediatorColorSelectionPanel.RandomPallete();
+                Debug.Log("RANDOM COLORS WERE SET");
             }
             else if (ReferenceEquals(gameObject, ButtonStop))
             {

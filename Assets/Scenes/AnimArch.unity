@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3731193, g: 0.38073996, b: 0.35872698, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -20636,6 +20636,7 @@ MonoBehaviour:
   isPaused: 0
   standardPlayMode: 0
   nextStep: 0
+  isEXECommandReturn: 0
   startClassName: 
   startMethodName: 
   SuperSpeed: 0
@@ -26367,8 +26368,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ae81dcb336c4c4785e93b28fc4e619, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LeafPrefab: {fileID: 3741087322950803797, guid: 11e771dad1ee3654498374fa347420bc,
-    type: 3}
 --- !u!114 &650752381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26381,8 +26380,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a410816f552934e4cb14aec715cd0120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PatternPrefab: {fileID: 9147520873521795905, guid: 62f1d8450967fdf47b451aef9e42d0ea,
-    type: 3}
 --- !u!114 &650752382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39202,6 +39199,7 @@ MonoBehaviour:
   ButtonStop: {fileID: 805633105}
   ButtonPause: {fileID: 322495831}
   StepButton: {fileID: 1284523689}
+  MediatorColorSelectionPanel: {fileID: 858352412}
 --- !u!1 &1006997634
 GameObject:
   m_ObjectHideFlags: 0
