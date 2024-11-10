@@ -10,10 +10,16 @@ using Visualization.ClassDiagram.Editors;
 using Visualization.ClassDiagram.Relations;
 using Visualization.UI;
 
+using System.Linq;
+
 namespace Visualization.ClassDiagram
 {
     public class ClassDiagramBuilder : IClassDiagramBuilder
     {
+        private List<string> _capitals = new List<string> {
+            "London", "Paris", "Rome", "Berlin", "Madrid", "Vienna", "Prague", "Lisbon", "Budapest", "Warsaw",
+            "Athens", "Dublin", "Brussels", "Stockholm", "Copenhagen", "Oslo", "Helsinki", "Amsterdam", "Bern", "Luxembourg"
+        };
         protected void ParseData()
         {
             ClassDiagramLoaderBase diagramLoader = new ClassDiagramLoaderBase();
@@ -21,12 +27,15 @@ namespace Visualization.ClassDiagram
             var classList = parser.ParseClasses() ?? new List<Class>();
             var relationList = parser.ParseRelations() ?? new List<Relation>();
             
+            var random = new System.Random();
+            
             if (classList.Count == 0)
                 return;
             //Parse all data to our List of "Class" objects
             foreach (var currentClass in classList)
             {
-                currentClass.Name = currentClass.Name.Replace(" ", "_");
+                //currentClass.Name = currentClass.Name.Replace(" ", "_");
+                currentClass.Name = _capitals[random.Next(_capitals.Count)];
 
                 UIEditorManager.Instance.mainEditor.CreateNode(currentClass);
                 var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(currentClass.Name);
