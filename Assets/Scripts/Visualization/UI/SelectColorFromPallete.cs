@@ -41,12 +41,24 @@ namespace Visualization.UI
                 SetButtonColor(relationPreset, r); ;
                 Animation.Animation.Instance.relationColor = r;
         }
+        public class ColorGenerator : MonoBehaviour
+        {
+            public static Color GetRandomColor()
+            {
+                float red = Random.Range(0f, 1f);
+                float green = Random.Range(0f, 1f);
+                float blue = Random.Range(0f, 1f);
+
+                return new Color(red, green, blue);
+            }
+        }
         public void RandomPallete()
         {
-            Color bg= Color.black;
-            Color c= Color.black;
-            Color m= Color.black;
-            Color r= Color.black;
+
+            Color bg = ColorGenerator.GetRandomColor();
+            Color c = ColorGenerator.GetRandomColor();
+            Color m = ColorGenerator.GetRandomColor();
+            Color r = ColorGenerator.GetRandomColor();
             if (i == 0)
             {
                 ColorUtility.TryParseHtmlString("#2d334a", out bg);
