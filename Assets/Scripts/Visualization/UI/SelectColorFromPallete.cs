@@ -59,36 +59,36 @@ namespace Visualization.UI
             Color c = ColorGenerator.GetRandomColor();
             Color m = ColorGenerator.GetRandomColor();
             Color r = ColorGenerator.GetRandomColor();
-            if (i == 0)
-            {
-                ColorUtility.TryParseHtmlString("#2d334a", out bg);
-                ColorUtility.TryParseHtmlString("#0c9463", out c);
-                ColorUtility.TryParseHtmlString("#fbe3b9", out m);
-                ColorUtility.TryParseHtmlString("#fab696", out r);
-            }
-            if (i == 3)
-            {
-                ColorUtility.TryParseHtmlString("#522d5b", out bg);
-                ColorUtility.TryParseHtmlString("#e7d39f", out c);
-                ColorUtility.TryParseHtmlString("#d7385e", out m);
-                ColorUtility.TryParseHtmlString("#fb7b6b", out r);
-            }
-            if (i == 2)
-            {
-                ColorUtility.TryParseHtmlString("#434e52", out bg);
-                ColorUtility.TryParseHtmlString("#5b8c85", out c);
-                ColorUtility.TryParseHtmlString("#ecce6d", out m);
-                ColorUtility.TryParseHtmlString("#ecce6d", out r);
-            }
-            if (i == 1)
-            {
-                ColorUtility.TryParseHtmlString("#596157", out bg);
-                ColorUtility.TryParseHtmlString("#5b8c5a", out c);
-                ColorUtility.TryParseHtmlString("#cfd186", out m);
-                ColorUtility.TryParseHtmlString("#cfd186", out r);
-            }
-            i++;
-            if (i > 3) i = 0;
+            //if (i == 0)
+            //{
+            //    ColorUtility.TryParseHtmlString("#2d334a", out bg);
+            //    ColorUtility.TryParseHtmlString("#0c9463", out c);
+            //    ColorUtility.TryParseHtmlString("#fbe3b9", out m);
+            //    ColorUtility.TryParseHtmlString("#fab696", out r);
+            //}
+            //if (i == 3)
+            //{
+            //    ColorUtility.TryParseHtmlString("#522d5b", out bg);
+            //    ColorUtility.TryParseHtmlString("#e7d39f", out c);
+            //    ColorUtility.TryParseHtmlString("#d7385e", out m);
+            //    ColorUtility.TryParseHtmlString("#fb7b6b", out r);
+            //}
+            //if (i == 2)
+            //{
+            //    ColorUtility.TryParseHtmlString("#434e52", out bg);
+            //    ColorUtility.TryParseHtmlString("#5b8c85", out c);
+            //    ColorUtility.TryParseHtmlString("#ecce6d", out m);
+            //    ColorUtility.TryParseHtmlString("#ecce6d", out r);
+            //}
+            //if (i == 1)
+            //{
+            //    ColorUtility.TryParseHtmlString("#596157", out bg);
+            //    ColorUtility.TryParseHtmlString("#5b8c5a", out c);
+            //    ColorUtility.TryParseHtmlString("#cfd186", out m);
+            //    ColorUtility.TryParseHtmlString("#cfd186", out r);
+            //}
+            //i++;
+            //if (i > 3) i = 0;
             SetColor(c, m, r);
             GameObject.Find("Main Camera").GetComponent<Camera>().backgroundColor = bg;
         }
