@@ -12,7 +12,7 @@ namespace Visualization.UI
         [SerializeField] private GameObject ButtonStop;
         [SerializeField] private GameObject ButtonPause;        
         [SerializeField] private GameObject StepButton;
-        MediatorColorSelectionPanel MediatorColorSelectionPanel;
+        [SerializeField] MediatorColorSelectionPanel MediatorColorSelectionPanel;
 
         public override void OnClicked(GameObject gameObject)
         {
