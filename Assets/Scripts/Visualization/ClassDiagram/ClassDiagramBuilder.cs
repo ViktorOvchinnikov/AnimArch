@@ -20,23 +20,30 @@ namespace Visualization.ClassDiagram
             var parser = diagramLoader.LoadDiagram(AnimationData.Instance.GetDiagramPath());
             var classList = parser.ParseClasses() ?? new List<Class>();
             var relationList = parser.ParseRelations() ?? new List<Relation>();
-            
+
             if (classList.Count == 0)
                 return;
             //Parse all data to our List of "Class" objects
+
+            var plantUmlBuilder = new System.Text.StringBuilder();
+            plantUmlBuilder.AppendLine("@startuml");
+
+            // Spracovanie tried
             foreach (var currentClass in classList)
             {
+
                 currentClass.Name = currentClass.Name.Replace(" ", "_");
+                plantUmlBuilder.AppendLine($"class {currentClass.Name} {{");
 
                 UIEditorManager.Instance.mainEditor.CreateNode(currentClass);
                 var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(currentClass.Name);
-
                 if (classInDiagram.ClassInfo == null)
                     continue;
-
+                
                 currentClass.Attributes ??= new List<Attribute>();
                 foreach (var attribute in currentClass.Attributes)
                 {
+                    plantUmlBuilder.AppendLine($"    + {attribute.Name} : {attribute.Type}");
                     UIEditorManager.Instance.mainEditor.AddAttribute(currentClass.Name, attribute);
                 }
 
@@ -44,18 +51,31 @@ namespace Visualization.ClassDiagram
                 currentClass.Methods ??= new List<Method>();
                 foreach (var method in currentClass.Methods)
                 {
+                    plantUmlBuilder.AppendLine($"    + {method.Name}() : {method.ReturnValue}");
                     UIEditorManager.Instance.mainEditor.AddMethod(currentClass.Name, method);
                 }
-
+                
                 currentClass.Top *= -1;
+
+                plantUmlBuilder.AppendLine("}"); 
+
+                
+                
             }
 
 
             foreach (var relation in relationList)
             {
+                plantUmlBuilder.AppendLine($"{relation.SourceModelName} --> {relation.TargetModelName}");
                 UIEditorManager.Instance.mainEditor.CreateRelation(relation);
             }
+
+            plantUmlBuilder.AppendLine("@enduml");
+
+
+            Debug.Log(plantUmlBuilder.ToString());
         }
+
 
         public override void CreateGraph()
         {
