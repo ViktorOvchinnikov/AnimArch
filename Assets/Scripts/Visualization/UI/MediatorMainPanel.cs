@@ -3,6 +3,7 @@ using Microsoft.Msagl.Core.DataStructures;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Visualization.Animation;
+ 
 
 namespace Visualization.UI
 {
@@ -11,6 +12,9 @@ namespace Visualization.UI
         [SerializeField] private GameObject MainPanel;
         [SerializeField] private GameObject Toggle;
         [SerializeField] private GameObject PatternCatalogueButton;
+        //Only For test purpose
+        [SerializeField] public Token token; 
+
         public MediatorDiagram MediatorDiagram;
         public MediatorMasking MediatorMasking;
         public MediatorAnimation MediatorAnimation;
