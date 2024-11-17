@@ -8,33 +8,31 @@ using UnityEngine;
 
 public class Token : MonoBehaviour
 {
-    private string tokenFilePath = "tokenChat.txt";
-    public string TokenValue { get; internal set; }
+    private static string tokenFilePath = "tokenChat.txt";
 
-    Token() { 
-        RetrieveToken();
-    }
 
-    private void RetrieveToken()
+    public static string RetrieveToken()
     {
         String line;
         try
         {
             using (StreamReader reader = new StreamReader(tokenFilePath))
             {
-                TokenValue = reader.ReadLine();
-                Debug.LogError("Your token is: " + TokenValue);
+                var token = reader.ReadLine();
+                Debug.LogError("Your token is: " + token);
+                return token;
             }
         }
         catch (Exception ex)
         {
             Debug.LogError("Your tokenFile does not exists! " + ex.Message);
         }
+        return null;
     }
 
-    void Start()
-    {
-        Token connector = new Token();
-    }
+    // void Start()
+    // {
+    //     RetrieveToken();
+    // }
 }
 
