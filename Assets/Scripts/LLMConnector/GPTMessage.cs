@@ -12,12 +12,13 @@ public class GPTMessage: MonoBehaviour
 
     public void SendMessage()
     {
+        key = Token.RetrieveToken();
         StartCoroutine(SenGPTMessage(presetMessage));
     }
 
     private IEnumerator SenGPTMessage(string userMessage)
     {
-        key = Token.RetrieveToken();
+        Debug.Log("Started GPT querry.");
 
         var requestData = new RequestData
         {
