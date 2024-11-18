@@ -12,19 +12,19 @@ public class GPTMessage: MonoBehaviour
 
     public void SendMessage()
     {
+        key = Token.RetrieveToken();
         StartCoroutine(SenGPTMessage(presetMessage));
     }
 
     private IEnumerator SenGPTMessage(string userMessage)
     {
-        key = Token.RetrieveToken();
 
         var requestData = new RequestData
         {
             model = "gpt-4",
             messages = new List<Message>
             {
-                new Message { role = "system", content = "You are a helpful assistant." },
+                //new Message { role = "system", content = "You are a helpful assistant." },
                 new Message { role = "user", content = userMessage }
             },
             max_tokens = 100,
