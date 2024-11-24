@@ -56,7 +56,7 @@ public class GPTMessage: MonoBehaviour
             else
             {
                 string jsonResponse = webRequest.downloadHandler.text;
-                Debug.Log($"ChatGPT Response: {jsonResponse}");
+                //Debug.Log($"ChatGPT Response: {jsonResponse}");
                 ParseResponse(jsonResponse);
             }
         }

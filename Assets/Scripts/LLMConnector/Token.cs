@@ -19,7 +19,7 @@ public class Token : MonoBehaviour
             using (StreamReader reader = new StreamReader(tokenFilePath))
             {
                 var token = reader.ReadLine();
-                Debug.LogError("Your token is: " + token);
+                //Debug.Log("Your token is: " + token);
                 return token;
             }
         }
