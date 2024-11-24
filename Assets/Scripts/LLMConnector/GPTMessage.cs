@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Threading.Tasks;
 
-public class GPTMessage: MonoBehaviour
+public class GPTMessage: GPTBase
 {
-    private string key;
+    private string apiKey;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
-    private string presetMessage = "Hello, how are you?";
+    private string defaultQuestion = "Hello, how are you?";
 
-    public void SendMessage()
+    public void SendMessageAfterClick()
     {
-        key = Token.RetrieveToken();
-        StartCoroutine(SenGPTMessage(presetMessage));
+        apiKey = Token.RetrieveToken();
+        SendMessage(defaultQuestion);
+        //StartCoroutine(SenGPTMessage(presetMessage));
     }
 
-    private IEnumerator SenGPTMessage(string userMessage)
+    private void Awake()
     {
+        apiKey = Token.RetrieveToken(); 
+    }
 
+    public override async Task<string> SendMessage(string userMessage)
+    {
         var requestData = new RequestData
         {
             model = "gpt-4",
@@ -37,36 +43,40 @@ public class GPTMessage: MonoBehaviour
         using (UnityWebRequest webRequest = new UnityWebRequest(apiUrl, "POST"))
         {
             webRequest.SetRequestHeader("Content-Type", "application/json");
-            webRequest.SetRequestHeader("Authorization", $"Bearer {key}");
+            webRequest.SetRequestHeader("Authorization", $"Bearer {apiKey}");
 
             webRequest.uploadHandler = new UploadHandlerRaw(jsonToSend);
             webRequest.downloadHandler = new DownloadHandlerBuffer();
 
-            yield return webRequest.SendWebRequest();
+            var operation = webRequest.SendWebRequest();
+            while (!operation.isDone)
+                await Task.Yield();
 
             if (webRequest.result == UnityWebRequest.Result.ConnectionError)
             {
                 Debug.LogError($"Connection error: {webRequest.error}");
+                return $"Error: {webRequest.error}";
             }
             else if (webRequest.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError($"Protocol error: {webRequest.error}");
                 Debug.LogError($"Response: {webRequest.downloadHandler.text}");
+                return $"Error: {webRequest.error}";
             }
             else
             {
                 string jsonResponse = webRequest.downloadHandler.text;
-                //Debug.Log($"ChatGPT Response: {jsonResponse}");
-                ParseResponse(jsonResponse);
+                return ParseResponse(jsonResponse);
             }
         }
     }
 
-    private void ParseResponse(string jsonResponse)
+    private string ParseResponse(string jsonResponse)
     {
         var response = JsonUtility.FromJson<Response>(jsonResponse);
         string chatbotReply = response.choices[0].message.content;
         Debug.Log($"ChatGPT: {chatbotReply}");
+        return chatbotReply;
     }
 
     [System.Serializable]

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311912, g: 0.3807395, b: 0.35872674, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -60876,8 +60876,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1849029855}
-        m_TargetAssemblyTypeName: APIConnector, XDE
-        m_MethodName: SendMessage
+        m_TargetAssemblyTypeName: GPTMessage, XDE
+        m_MethodName: SendMessageAfterClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

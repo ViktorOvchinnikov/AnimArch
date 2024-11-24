@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class Token : MonoBehaviour
 {
-    private static string tokenFilePath = "tokenChat.txt";
+    private static string tokenFilePath = "Assets/Configuration/tokenChat.txt";
 
 
     public static string RetrieveToken()
