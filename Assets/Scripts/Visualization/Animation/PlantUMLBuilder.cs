@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using Visualization.ClassDiagram.ClassComponents;
 using Visualization.ClassDiagram.Relations;
+using OALProgramControl;
 
 namespace Visualization.Animation
 {
@@ -15,19 +17,20 @@ namespace Visualization.Animation
             umlBuilder = new StringBuilder();
         }
 
+        public void PrintDiagram() {
+            Debug.Log("[PLANT_UML]" + GetDiagram());
+        }
+
         public string GetDiagram()
         {
+            umlBuilder = new StringBuilder();
             // Automaticky vytvoriť celý diagram
             StartDiagram();
             AddClassesFromAnimation();
             AddRelationsFromAnimation();
             EndDiagram();
 
-            // Výpis do konzolky
-            var diagram = umlBuilder.ToString();
-            Debug.Log(diagram);
-
-            return diagram;
+            return umlBuilder.ToString();
         }
 
         private void StartDiagram()
@@ -51,7 +54,7 @@ namespace Visualization.Animation
                 umlBuilder.AppendLine($"class {className} {{");
 
 
-                currentClass.Attributes ??= new List<Attribute>();
+                currentClass.Attributes ??= new List<Visualization.ClassDiagram.ClassComponents.Attribute>();
                 foreach (var attribute in currentClass.Attributes)
                 {
                     umlBuilder.AppendLine($"    + {attribute.Name} : {attribute.Type}");

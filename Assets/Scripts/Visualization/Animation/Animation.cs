@@ -25,6 +25,7 @@ namespace Visualization.Animation
     //Controls the entire animation process
     public class Animation : Singleton<Animation>
     {
+        private PlantUMLBuilder plantUMLBuilder = new PlantUMLBuilder();
         public ClassDiagram.Diagrams.ClassDiagram classDiagram { get; private set;}
         public ObjectDiagram objectDiagram { get; private set;}
         public ActivityDiagram activityDiagram { get; private set; }
@@ -54,6 +55,7 @@ namespace Visualization.Animation
         [HideInInspector] public OALProgram CurrentProgramInstance { get { return currentProgramInstance; } }
 
         public bool SuperSpeed = false;
+
 
         private void Awake()
         {
@@ -221,6 +223,8 @@ namespace Visualization.Animation
             }
 
             SetupAnimation(startMethod, MethodExecutableCode);
+            plantUMLBuilder.PrintDiagram();
+
 
             AnimationThread SuperThread = new AnimationThread(currentProgramInstance.CommandStack, currentProgramInstance, this);
             yield return StartCoroutine(SuperThread.Start());

@@ -43,9 +43,6 @@ namespace Visualization.ClassDiagram.Editors
             var classInDiagram = new ClassInDiagram
                 { ParsedClass = newClass, ClassInfo = newCdClass, VisualObject = classGo };
             DiagramPool.Instance.ClassDiagram.Classes.Add(classInDiagram);
-            //Pridaný PlantUML builder - nie šťastné umiestnenie
-            var plantUMLBuilder = new PlantUMLBuilder();
-            string plantUMLDiagram = plantUMLBuilder.GetDiagram();
         }
 
         public virtual void UpdateNodeName(string oldName, string newName)

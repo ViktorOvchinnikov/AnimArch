@@ -63,10 +63,6 @@ namespace Visualization.ClassDiagram
             {
                 UIEditorManager.Instance.mainEditor.CreateRelation(relation);
             }
-            //var plantUMLBuilder = new PlantUMLBuilder();
-            //string plantUMLDiagram = plantUMLBuilder.GetDiagram();
-
-
         }
 
 
