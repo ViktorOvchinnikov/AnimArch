@@ -80,13 +80,28 @@ namespace Visualization.Animation
         {
             var relationList = Animation.Instance.classDiagram.GetRelationList();
 
+            //adding relations from OALProgram
+            OALProgram programInstance = Animation.Instance.CurrentProgramInstance;
+
+            var relationshipSpace = programInstance.RelationshipSpace;
+            var allRepationships = relationshipSpace.GetAllRelationshipsTupples();
+
+            foreach (var tuple in allRepationships)
+            {
+                var relation = relationshipSpace.GetRelationshipByName(tuple.Item1);
+                var relName = relation.RelationshipName;
+                var fromClass = relation.FromClass;
+                var toClass = relation.ToClass;
+                Debug.Log("[PLANT_UML] relation = " + relName + ", from = " + fromClass + ", to = " + toClass);
+            }
+        
+            //adding relations from ClassDiagram
             foreach (var relation in relationList)
             {
                 var source = relation.SourceModelName.Replace(" ", "_");
                 var target = relation.TargetModelName.Replace(" ", "_");
                 var relationType = relation.PropertiesEaType;
                 var relationDirection = relation.PropertiesDirection;
-
                 string relationArrow = relationType switch
                 {
                     "Realisation" => "<|..",
