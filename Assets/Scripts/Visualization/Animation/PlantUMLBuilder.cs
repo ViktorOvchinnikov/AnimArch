@@ -78,7 +78,7 @@ namespace Visualization.Animation
 
         private void AddRelationsFromAnimation()
         {
-            var relationList = Animation.Instance.classDiagram.GetRelationList();
+            var relationList = Animation.Instance.classDiagram.GetRelationList(); //TODO Preptočiť všetko na "Animation.Instance.CurrentProgramInstance"
 
             //adding relations from OALProgram
             OALProgram programInstance = Animation.Instance.CurrentProgramInstance;
@@ -101,7 +101,8 @@ namespace Visualization.Animation
                 var source = relation.SourceModelName.Replace(" ", "_");
                 var target = relation.TargetModelName.Replace(" ", "_");
                 var relationType = relation.PropertiesEaType;
-                var relationDirection = relation.PropertiesDirection;
+                var relationDirection = relation.PropertiesDirection; //nechať zakomentovaný swtich, !!! všetko asociácia !!! 
+				//Ak od seba triedy dedia, tak typ Generalization| dedenie CDClass ( - super class)
                 string relationArrow = relationType switch
                 {
                     "Realisation" => "<|..",
@@ -113,7 +114,7 @@ namespace Visualization.Animation
                         _ => "--"
                     },
                     "Dependency" => "..>",
-                    "Generalization" => "<|--",
+                    "Generalization" => "<|--", //Naopak - TODO
                     "Implements" => "<|..",
                     _ => "--"
                 };
