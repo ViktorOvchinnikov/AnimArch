@@ -1,38 +1,83 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 
-public class GPTMessage: GPTBase
+public class GPTMessage: BaseModel
 {
     private string apiKey;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
     private string defaultQuestion = "Hello, how are you?";
+    private string lastResponse = "No response";
+    private string _chatResponse = "Default response";
 
     public void SendMessageAfterClick()
     {
         apiKey = Token.RetrieveToken();
-        SendMessage(defaultQuestion);
-        //StartCoroutine(SenGPTMessage(presetMessage));
+        var res = SendMessage(defaultQuestion);
+        Debug.LogError($"Response: {res}");
     }
-
-    private void Awake()
+    public override string SendMessage(string message)
     {
-        apiKey = Token.RetrieveToken(); 
+        // Start the coroutine to handle the async logic
+        StartCoroutine(SendMessageCoroutineFirst(message));
+
+        // Wait a frame for the response to be processed before returning
+        Debug.LogError($"_chatResponse 1: {_chatResponse}");
+        return _chatResponse;
     }
 
-    public override async Task<string> SendMessage(string userMessage)
+    // This coroutine handles the asynchronous request
+    private IEnumerator SendMessageCoroutineFirst(string userMessage)
+    {
+        Task<string> task = FetchAndStoreResponse(userMessage);
+
+        // Wait for the task to complete
+        yield return new WaitUntil(() => task.IsCompleted);
+
+        // Set the response once the task has finished
+        _chatResponse = task.Result; // Assign the result to _chatResponse
+        Debug.LogError($"_chatResponse 2: {_chatResponse}");
+    }
+
+    // This method handles the async logic for fetching and storing the response
+    public async Task<string> FetchAndStoreResponse(string userMessage)
+    {
+        try
+        {
+            // Wait for the completion of SendMessageCoroutine
+            string response = await SendMessageCoroutine(userMessage);
+            lastResponse = response;  // Store the response
+            return response;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("An error occurred: " + ex.Message);
+            return $"Error: {ex.Message}";
+        }
+    }
+
+    public async void SendMessageAsync(string userMessage)
+    {
+        await FetchAndStoreResponse(userMessage);
+        //Debug.Log("Last Response last last:" + lastResponse);
+        _chatResponse = lastResponse;
+    }
+
+    
+
+    private async Task<string> SendMessageCoroutine(string userMessage)
     {
         var requestData = new RequestData
         {
             model = "gpt-4",
             messages = new List<Message>
-            {
-                //new Message { role = "system", content = "You are a helpful assistant." },
-                new Message { role = "user", content = userMessage }
-            },
+        {
+            new Message { role = "user", content = userMessage }
+        },
             max_tokens = 100,
             temperature = 0.7f
         };
@@ -48,9 +93,10 @@ public class GPTMessage: GPTBase
             webRequest.uploadHandler = new UploadHandlerRaw(jsonToSend);
             webRequest.downloadHandler = new DownloadHandlerBuffer();
 
-            var operation = webRequest.SendWebRequest();
-            while (!operation.isDone)
-                await Task.Yield();
+            // Create a TaskCompletionSource to handle awaiting
+            var tcs = new TaskCompletionSource<bool>();
+            webRequest.SendWebRequest().completed += operation => tcs.SetResult(true);
+            await tcs.Task;
 
             if (webRequest.result == UnityWebRequest.Result.ConnectionError)
             {
@@ -66,16 +112,18 @@ public class GPTMessage: GPTBase
             else
             {
                 string jsonResponse = webRequest.downloadHandler.text;
-                return ParseResponse(jsonResponse);
+                string parsedResponse = ParseResponse(jsonResponse);
+                return parsedResponse;
             }
         }
     }
+
+
 
     private string ParseResponse(string jsonResponse)
     {
         var response = JsonUtility.FromJson<Response>(jsonResponse);
         string chatbotReply = response.choices[0].message.content;
-        Debug.Log($"ChatGPT: {chatbotReply}");
         return chatbotReply;
     }
 
