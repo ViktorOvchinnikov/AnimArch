@@ -5,6 +5,7 @@ using UnityEngine;
 using Visualization.ClassDiagram.ClassComponents;
 using Visualization.ClassDiagram.Relations;
 using OALProgramControl;
+using Assets.Scripts.AnimationControl.UMLDiagram;
 
 namespace Visualization.Animation
 {
