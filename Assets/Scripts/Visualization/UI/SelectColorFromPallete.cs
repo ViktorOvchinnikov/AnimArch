@@ -54,7 +54,6 @@ namespace Visualization.UI
                 green = Random.Range(0f, 1f);
                 blue = Random.Range(0f, 1f);
 
-                // Ensure the color is not predominantly green or red
                 if (!IsGreenDominant(red, green, blue) && !IsRedDominant(red, green, blue))
                     break;
             }
@@ -64,12 +63,9 @@ namespace Visualization.UI
 
         private static bool IsGreenDominant(float red, float green, float blue)
         {
-            return green > red * 1.2f && green > blue * 1.4f;
+            return green > red * 1.2f && green > blue * 1.2f;
         }
 
-        /// <summary>
-        /// Determines if a color is predominantly red.
-        /// </summary>
         private static bool IsRedDominant(float red, float green, float blue)
         {
             return red > green * 1.3f && red > blue * 1.3f;
