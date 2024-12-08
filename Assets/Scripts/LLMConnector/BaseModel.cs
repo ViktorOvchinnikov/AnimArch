@@ -5,5 +5,5 @@ using UnityEngine;
 
 public abstract class BaseModel : MonoBehaviour
 {
-    public abstract string SendMessage(string message);
+    public abstract Task<string> SendMessage(string message);
 }

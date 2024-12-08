@@ -22549,6 +22549,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cdd3c2f1a27e4c3e800558dcb25805d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  apiKey: 
+  apiUrl: https://api.openai.com/v1/chat/completions
+  defaultQuestion: Hello, how are you?
+  lastResponse: No response
+  _chatResponse: Default response
+  isResponseReady: 0
 --- !u!1 &551347424
 GameObject:
   m_ObjectHideFlags: 0
@@ -64525,6 +64531,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cdd3c2f1a27e4c3e800558dcb25805d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  apiKey: 
+  apiUrl: https://api.openai.com/v1/chat/completions
+  defaultQuestion: Hello, how are you?
+  lastResponse: No response
+  _chatResponse: Default response
+  isResponseReady: 0
 --- !u!1 &1850861147
 GameObject:
   m_ObjectHideFlags: 0
