@@ -6,13 +6,18 @@ diagram
     ;
 
 element
-    :   classDefinition
+    :   package
+    |   classDefinition
+    |   interfaceDefinition
+    |   abstractClassDefinition
+    |   enumDefinition
+    |   note
     |   relation
     |   labeledRelation
     ;
 
 classDefinition
-    :   'class' className '{' classBody '}'
+    :   'class' className ('as' aliasName)? '{' classBody '}'
     ;
 
 classBody
@@ -24,12 +29,12 @@ classMember
     |   attribute
     ;
 
-method
-    :   visibility? methodName '(' methodArguments? ')' ':' returnType
+attribute
+    :   visibility? ('{static}' | '{abstract}')? attributeName (':' type)?
     ;
 
-attribute
-    :   visibility? attributeName (':' type)?
+method
+    :   visibility? ('{static}' | '{abstract}')? methodName '(' methodArguments? ')' ':' returnType
     ;
 
 methodArguments
@@ -45,7 +50,7 @@ methodArgument
     ;
 
 relation
-    :   className relationType className
+    :   className '[' multiplicity? ']' relationType '[' multiplicity? ']' className
     ;
 
 
@@ -78,12 +83,20 @@ visibility
     |   '#'
     ;
 
+multiplicity
+    :   '*' 
+    |   '1' 
+    |   '0..1' 
+    |   '1..*'
+    |   'n'
+    ;
+
 TEXT
     :   ~["\r\n]+
     ;
 
 className
-    :   NAME
+    :   NAME ('<' type (',' type)* '>')?
     ;
 
 methodName
@@ -117,4 +130,40 @@ COMMENT
 WHITE_SPACE
     :   [ \t\r\n]+
     -> skip
+    ;
+	
+interfaceDefinition
+    :   'interface' className '{' classBody '}'
+    ;
+
+abstractClassDefinition
+    :   'abstract' 'class' className '{' classBody '}'
+    ;
+
+enumDefinition
+    :   'enum' className '{' enumBody '}'
+    ;
+
+enumBody
+    :   enumValue (',' enumValue)* 
+    ;
+
+enumValue
+    :   NAME
+    ;
+	
+note
+    :   'note' label 'as' NAME
+    ;
+
+package
+    :   'package' packageName '{' element* '}'
+    ;
+
+packageName
+    :   NAME
+    ;
+	
+aliasName
+    :   NAME
     ;
