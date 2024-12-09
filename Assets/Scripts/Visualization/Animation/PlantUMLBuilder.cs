@@ -12,8 +12,14 @@ namespace Visualization.Animation
     public class PlantUMLBuilder
     {
         private StringBuilder umlBuilder;
+		private OALProgram programInstance;
 
-        public PlantUMLBuilder()
+        public PlantUMLBuilder(OALProgram programInstance)
+        {
+            this.programInstance = programInstance;
+            umlBuilder = new StringBuilder();
+        }
+		public PlantUMLBuilder()
         {
             umlBuilder = new StringBuilder();
         }
@@ -39,6 +45,10 @@ namespace Visualization.Animation
 
         private void StartDiagram()
         {
+			if (programInstance == null)
+            {
+				this.programInstance = Animation.Instance.CurrentProgramInstance;
+            }
             umlBuilder.Clear();
             umlBuilder.AppendLine("@startuml");
         }
@@ -50,14 +60,14 @@ namespace Visualization.Animation
 
         private void AddClassesFromAnimation()
         {
-            List<CDClass> classList = Animation.Instance.CurrentProgramInstance.ExecutionSpace.Classes;
+            List<CDClass> classList = this.programInstance.ExecutionSpace.Classes;
 
             foreach (CDClass currentClass in classList)
             {
                 string className = currentClass.Name.Replace(" ", "_");
                 umlBuilder.AppendLine($"class {className} {{");
 
-                // Attributes
+
                 List<CDAttribute> attributes = currentClass.GetAttributes(true);
                 if (attributes != null && attributes.Count > 0)
                 {
@@ -67,7 +77,7 @@ namespace Visualization.Animation
                     }
                 }
 
-                // Methods
+
                 List<CDMethod> methods = currentClass.GetMethods(true);
                 if (methods != null && methods.Count > 0)
                 {
@@ -88,9 +98,8 @@ namespace Visualization.Animation
 
         private void AddRelationsFromAnimation()
         {
-            OALProgram programInstance = Animation.Instance.CurrentProgramInstance;
-            CDRelationshipPool relationshipSpace = programInstance.RelationshipSpace;
-            List<CDClass> classList = Animation.Instance.CurrentProgramInstance.ExecutionSpace.Classes;
+            CDRelationshipPool relationshipSpace = this.programInstance.RelationshipSpace; 
+            List<CDClass> classList = this.programInstance.ExecutionSpace.Classes;
             List<(string relationshipName, long fromClassId, long toClassId)> allRelationships = relationshipSpace.GetAllRelationshipsTupples();
 
             foreach ((string relationshipName, long fromClassId, long toClassId) in allRelationships)
