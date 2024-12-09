@@ -50,12 +50,7 @@ methodArgument
     ;
 
 relation
-    :   className '[' multiplicity? ']' relationType '[' multiplicity? ']' className
-    ;
-
-
-labeledRelation
-    :   className label relationType label className description
+    :   className multiplicity? relationType multiplicity? className description?
     ;
 
 label
@@ -69,7 +64,11 @@ description
 relationType
     :   '<|..'
     |   '-->'
+    |   '-up->'
+    |   '-down->'
     |   '<--'
+    |   '<-up-'
+    |   '<-down-'
     |   '<-->'
     |   '--'
     |   '..>'
@@ -84,11 +83,14 @@ visibility
     ;
 
 multiplicity
-    :   '*' 
-    |   '1' 
-    |   '0..1' 
-    |   '1..*'
-    |   'n'
+    :   '"' '*' '"'
+    |   '"' '1' '"'
+    |   '"' '0..1' '"'
+    |   '"' '0..*' '"'
+    |   '"' '1..*' '"'
+    |   '"' 'n' '"'
+    |   '"' 'one' '"'
+    |   '"' 'many' '"'
     ;
 
 TEXT
