@@ -1,12 +1,6 @@
 using System.Collections.Generic;
-using TMPro;
-using UMSAGL.Scripts;
+using UnityEngine.UI;
 using UnityEngine;
-using Visualization;
-using Visualization.ClassDiagram;
-using Visualization.ClassDiagram.ComponentsInDiagram;
-using Visualization.ClassDiagram.Diagrams;
-using Visualization.ClassDiagram.Relations;
 using System.Linq;
 
 namespace Visualization.ClassDiagram.Diagrams
@@ -33,6 +27,24 @@ namespace Visualization.ClassDiagram.Diagrams
         {
             Debug.Log($"Class Name: {className}");
         }
+        GameObject myClass = GameObject.Find("suggested_class");
+        Transform background = myClass.transform.GetChild(0);
+        background.gameObject.GetComponent<Image>().color = new Color(0f, 1f, 0f, 0.5f);
+        Transform button01 = myClass.transform.GetChild(0).GetChild(1).GetChild(0);
+        Transform button = myClass.transform.GetChild(0).GetChild(1).GetChild(1);
+        button.gameObject.SetActive(true);
+
+        button01.gameObject.SetActive(true);
+        Debug.Log(myClass);
+
+        GameObject myClassToRemove = GameObject.Find("HumanWarrior");
+        Transform background2 = myClassToRemove.transform.GetChild(0);
+        background2.gameObject.GetComponent<Image>().color = new Color(1f, 0f, 0f, 0.5f);
+        Transform button2 = myClassToRemove.transform.GetChild(0).GetChild(1).GetChild(0);
+        Transform button02 = myClassToRemove.transform.GetChild(0).GetChild(1).GetChild(1);
+        button2.gameObject.SetActive(true);
+        button02.gameObject.SetActive(true);
+
     }
   }
 }
