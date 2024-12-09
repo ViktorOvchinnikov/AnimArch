@@ -2594,6 +2594,41 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6339469549711555323}
     m_Modifications:
+    - target: {fileID: 2847675699377612686, guid: 0af9a63443d46fa478102c15c61f1519,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2847675699377612686, guid: 0af9a63443d46fa478102c15c61f1519,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2847675699377612686, guid: 0af9a63443d46fa478102c15c61f1519,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2398271712557318398}
+    - target: {fileID: 2847675699377612686, guid: 0af9a63443d46fa478102c15c61f1519,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2847675699377612686, guid: 0af9a63443d46fa478102c15c61f1519,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: DeleteClass
+      objectReference: {fileID: 0}
+    - target: {fileID: 2847675699377612686, guid: 0af9a63443d46fa478102c15c61f1519,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Visualization.UI.ClassComponentsManagers.ClassManager, XDE
+      objectReference: {fileID: 0}
+    - target: {fileID: 2847675699377612686, guid: 0af9a63443d46fa478102c15c61f1519,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5552314775697411209, guid: 0af9a63443d46fa478102c15c61f1519,
         type: 3}
       propertyPath: m_RootOrder
