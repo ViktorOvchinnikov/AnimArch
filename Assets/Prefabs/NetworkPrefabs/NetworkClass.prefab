@@ -230,6 +230,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  IsObject: 0
 --- !u!54 &54018352948757740
 Rigidbody:
   m_ObjectHideFlags: 0
