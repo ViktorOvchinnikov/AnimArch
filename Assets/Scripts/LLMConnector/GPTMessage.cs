@@ -11,14 +11,11 @@ public class GPTMessage: BaseModel
     private string apiKey;
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
     private string defaultQuestion = "Hello, how are you?";
-    private string lastResponse = "No response";
-    private string _chatResponse = "Default response";
-    private bool isResponseReady;
 
-    public void SendMessageAfterClick()
-    {
-        SendMessageAsync();
-    }
+    //public void SendMessageAfterClick()
+    //{
+    //    SendMessageAsync();
+    //}
 
     public async Task SendMessageAsync()
     {
@@ -80,7 +77,6 @@ public class GPTMessage: BaseModel
     {
         var response = JsonUtility.FromJson<Response>(jsonResponse);
         string chatbotReply = response.choices[0].message.content;
-        Debug.LogError($"chatbotReply: {chatbotReply}");
         return chatbotReply;
     }
 

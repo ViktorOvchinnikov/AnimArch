@@ -22552,9 +22552,6 @@ MonoBehaviour:
   apiKey: 
   apiUrl: https://api.openai.com/v1/chat/completions
   defaultQuestion: Hello, how are you?
-  lastResponse: No response
-  _chatResponse: Default response
-  isResponseReady: 0
 --- !u!1 &551347424
 GameObject:
   m_ObjectHideFlags: 0
@@ -60882,7 +60879,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1849029855}
-        m_TargetAssemblyTypeName: GPTMessage, XDE
+        m_TargetAssemblyTypeName: GPTManager, XDE
         m_MethodName: SendMessageAfterClick
         m_Mode: 1
         m_Arguments:
@@ -64528,15 +64525,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1849029851}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cdd3c2f1a27e4c3e800558dcb25805d, type: 3}
+  m_Script: {fileID: 11500000, guid: 7209b9bb2d1943a4c9b0ad6c2158b7b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  apiKey: 
-  apiUrl: https://api.openai.com/v1/chat/completions
-  defaultQuestion: Hello, how are you?
-  lastResponse: No response
-  _chatResponse: Default response
-  isResponseReady: 0
 --- !u!1 &1850861147
 GameObject:
   m_ObjectHideFlags: 0
