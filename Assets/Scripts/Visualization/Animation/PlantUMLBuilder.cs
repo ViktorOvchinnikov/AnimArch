@@ -5,27 +5,36 @@ using UnityEngine;
 using Visualization.ClassDiagram.ClassComponents;
 using Visualization.ClassDiagram.Relations;
 using OALProgramControl;
-using Assets.Scripts.AnimationControl.UMLDiagram;
+using System.Linq;
 
 namespace Visualization.Animation
 {
     public class PlantUMLBuilder
     {
         private StringBuilder umlBuilder;
+		private OALProgram programInstance;
 
-        public PlantUMLBuilder()
+        public PlantUMLBuilder(OALProgram programInstance)
+        {
+            this.programInstance = programInstance;
+            umlBuilder = new StringBuilder();
+        }
+		public PlantUMLBuilder()
         {
             umlBuilder = new StringBuilder();
         }
 
         public void PrintDiagram() {
-            Debug.Log("[PLANT_UML]" + GetDiagram());
+            Debug.Log(new StringBuilder()
+                .AppendLine("[PLANT_UML]")
+                .Append(GetDiagram())
+                .ToString());
+
         }
 
         public string GetDiagram()
         {
             umlBuilder = new StringBuilder();
-            // Automaticky vytvoriť celý diagram
             StartDiagram();
             AddClassesFromAnimation();
             AddRelationsFromAnimation();
@@ -36,6 +45,10 @@ namespace Visualization.Animation
 
         private void StartDiagram()
         {
+			if (programInstance == null)
+            {
+				this.programInstance = Animation.Instance.CurrentProgramInstance;
+            }
             umlBuilder.Clear();
             umlBuilder.AppendLine("@startuml");
         }
@@ -47,82 +60,100 @@ namespace Visualization.Animation
 
         private void AddClassesFromAnimation()
         {
-            var classList = Animation.Instance.classDiagram.GetClassList();
+            List<CDClass> classList = this.programInstance.ExecutionSpace.Classes;
 
-            foreach (var currentClass in classList)
+            foreach (CDClass currentClass in classList)
             {
-                var className = currentClass.Name.Replace(" ", "_");
+                string className = currentClass.Name.Replace(" ", "_");
                 umlBuilder.AppendLine($"class {className} {{");
 
 
-                currentClass.Attributes ??= new List<Visualization.ClassDiagram.ClassComponents.Attribute>();
-                foreach (var attribute in currentClass.Attributes)
+                List<CDAttribute> attributes = currentClass.GetAttributes(true);
+                if (attributes != null && attributes.Count > 0)
                 {
-                    umlBuilder.AppendLine($"    + {attribute.Name} : {attribute.Type}");
-                }
-
-
-                currentClass.Methods ??= new List<Method>();
-                foreach (var method in currentClass.Methods)
-                {
-                    string arguments = "";
-                    if (method.arguments != null && method.arguments.Count > 0)
+                    foreach (CDAttribute attribute in attributes)
                     {
-                        arguments = string.Join(", ", method.arguments);
+                        umlBuilder.AppendLine($"    + {attribute.Name} : {attribute.Type}");
                     }
-                    umlBuilder.AppendLine($"    + {method.Name}({arguments}) : {method.ReturnValue}");
                 }
 
-                umlBuilder.AppendLine("}"); 
+
+                List<CDMethod> methods = currentClass.GetMethods(true);
+                if (methods != null && methods.Count > 0)
+                {
+                    foreach (CDMethod method in methods)
+                    {
+                        string arguments = method.Parameters != null && method.Parameters.Count > 0
+                            ? string.Join(", ", method.Parameters.Select(p => $"{p.Type} {p.Name}"))
+                            : string.Empty;
+
+                        umlBuilder.AppendLine($"    + {method.Name}({arguments}) : {method.ReturnType}");
+                    }
+                }
+
+                umlBuilder.AppendLine("}");
             }
         }
+
 
         private void AddRelationsFromAnimation()
         {
-            var relationList = Animation.Instance.classDiagram.GetRelationList();
+            CDRelationshipPool relationshipSpace = this.programInstance.RelationshipSpace; 
+            List<CDClass> classList = this.programInstance.ExecutionSpace.Classes;
+            List<(string relationshipName, long fromClassId, long toClassId)> allRelationships = relationshipSpace.GetAllRelationshipsTupples();
 
-            //adding relations from OALProgram
-            OALProgram programInstance = Animation.Instance.CurrentProgramInstance;
-
-            var relationshipSpace = programInstance.RelationshipSpace;
-            var allRepationships = relationshipSpace.GetAllRelationshipsTupples();
-
-            foreach (var tuple in allRepationships)
+            foreach ((string relationshipName, long fromClassId, long toClassId) in allRelationships)
             {
-                var relation = relationshipSpace.GetRelationshipByName(tuple.Item1);
-                var relName = relation.RelationshipName;
-                var fromClass = relation.FromClass;
-                var toClass = relation.ToClass;
-                Debug.Log("[PLANT_UML] relation = " + relName + ", from = " + fromClass + ", to = " + toClass);
-            }
-        
-            //adding relations from ClassDiagram
-            foreach (var relation in relationList)
-            {
-                var source = relation.SourceModelName.Replace(" ", "_");
-                var target = relation.TargetModelName.Replace(" ", "_");
-                var relationType = relation.PropertiesEaType;
-                var relationDirection = relation.PropertiesDirection;
-                string relationArrow = relationType switch
+                CDRelationship relation = relationshipSpace.GetRelationshipByName(relationshipName);
+
+                if (relation == null)
                 {
-                    "Realisation" => "<|..",
-                    "Association" => relationDirection switch
+                    Debug.LogWarning($"[PLANT_UML] Relationship {relationshipName} not found in RelationshipSpace.");
+                    continue;
+                }
+
+                string relName = relation.RelationshipName;
+                string fromClassName = relation.FromClass?.Replace(" ", "_");
+                string toClassName = relation.ToClass?.Replace(" ", "_");
+
+                if (fromClassName == null || toClassName == null)
+                {
+                    Debug.LogWarning($"[PLANT_UML] Missing class names for relationship {relName}.");
+                    continue;
+                }
+
+
+                
+                foreach (CDClass from_temp in classList)
+                {
+                    if (from_temp.Name == relation.FromClass) //Overenie, že sa jedná o triedu z relácie
                     {
-                        "Source -> Destination" => "-->",
-                        "Destination -> Source" => "<--",
-                        "Bi-Directional" => "<-->",
-                        _ => "--"
-                    },
-                    "Dependency" => "..>",
-                    "Generalization" => "<|--",
-                    "Implements" => "<|..",
-                    _ => "--"
-                };
+                        foreach (CDClass to_temp in classList)
+                        {
+                            if (to_temp.Name == relation.ToClass)
+                            {
+                                if (to_temp.SubClasses != null && to_temp.SubClasses.Contains(from_temp))
+                                {
 
+                                    umlBuilder.AppendLine($"{from_temp.Name.Replace(" ", "_")} --|> {to_temp.Name.Replace(" ", "_")}");
+                                    //Debug.Log($"[DEBUG] {from_temp.Name} is a SubClass of {to_temp.Name} -> Generalization");
+                                }
+                                else
+                                {
 
-                umlBuilder.AppendLine($"{source} {relationArrow} {target}");
+                                    umlBuilder.AppendLine($"{from_temp.Name.Replace(" ", "_")} --> {to_temp.Name.Replace(" ", "_")}");
+                                    //Debug.Log($"[DEBUG] {from_temp.Name} is NOT a SubClass of {to_temp.Name} -> Association");
+                                }
+                            }
+                        }
+                    }
+                }
+                
             }
         }
+
+
+
 
     }
 }
