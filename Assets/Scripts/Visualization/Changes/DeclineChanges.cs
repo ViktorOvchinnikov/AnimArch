@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System;
 
-public class AcceptChanges : MonoBehaviour
+public class DeclineChanges : MonoBehaviour
 {
     public List<Change> Changes = new List<Change>();
 
@@ -20,7 +20,7 @@ public class AcceptChanges : MonoBehaviour
     {
         if (change.Type == ChangeType.Class && change.Name == className)
         {
-            if (change.ChangeIsDeletion == false)
+            if (change.ChangeIsDeletion == true)
             {
                 Transform background2 = currentObject.transform.GetChild(1);
                 background2.gameObject.GetComponent<Image>().color = new Color(0f, 0f, 1f, 0.5f);
