@@ -16,11 +16,11 @@ public class SuggestedDiagram : MonoBehaviour
         GameObject myClass = GameObject.Find(className);
         if (myClass == null) return;
         
-        Transform background = myClass.transform.GetChild(0);
+        Transform background = myClass.transform.GetChild(1);
         background.gameObject.GetComponent<Image>().color = color;
         
-        Transform button1 = background.GetChild(0).GetChild(0);
-        Transform button2 = background.GetChild(0).GetChild(1);
+        Transform button1 = myClass.transform.GetChild(0).GetChild(0);
+        Transform button2 = myClass.transform.GetChild(0).GetChild(1);
         
         button1.gameObject.SetActive(true);
         button2.gameObject.SetActive(true);
@@ -31,7 +31,7 @@ public class SuggestedDiagram : MonoBehaviour
         GameObject myClassMethod = GameObject.Find(className);
         if (myClassMethod == null) return;
         
-        Transform allMethods = myClassMethod.transform.GetChild(0).GetChild(4).GetChild(0);
+        Transform allMethods = myClassMethod.transform.GetChild(1).GetChild(4).GetChild(0);
         for (int i = 0; i < allMethods.childCount; i++)
         {
             Transform method1 = allMethods.GetChild(i).GetChild(3);
