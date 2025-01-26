@@ -6,6 +6,10 @@ public class ChangeManager : MonoBehaviour
     {
         if (change == null) return;
         change.Accept();
+        if (change.ChangeIsDeletion)
+        {
+            //delete object
+        }
         Debug.Log($"Change '{change.Name}' of type '{change.Type}' has been ACCEPTED.");
     }
 

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
+
 
 public class SuggestedDiagram : MonoBehaviour
 {
@@ -37,6 +39,12 @@ public class SuggestedDiagram : MonoBehaviour
             Transform method1 = allMethods.GetChild(i).GetChild(3);
             Transform method2 = allMethods.GetChild(i).GetChild(4);
             
+            if (i % 2 == 0 )
+            {
+              allMethods.GetChild(i).GetChild(2).GetComponent<TMP_Text>().color = Color.red;
+            } else {
+              allMethods.GetChild(i).GetChild(2).GetComponent<TMP_Text>().color = new Color(0.0f, 0.7f, 0.0f);
+            }
             method1.gameObject.SetActive(true);
             method2.gameObject.SetActive(true);
         }
