@@ -124,9 +124,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: AnimArch.Visualization.UI.AttributeManager, XDE
-        m_MethodName: DeleteAttribute
+      - m_Target: {fileID: 5252511436227624082}
+        m_TargetAssemblyTypeName: DeclineChanges, XDE
+        m_MethodName: SaveChanges
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -369,6 +369,8 @@ GameObject:
   - component: {fileID: 4339136237510065240}
   - component: {fileID: 3247043778060033000}
   - component: {fileID: 3193324775172456244}
+  - component: {fileID: 5252511436227624082}
+  - component: {fileID: 2654972677091416156}
   m_Layer: 0
   m_Name: ClassMethod
   m_TagString: Untagged
@@ -455,6 +457,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   classTxt: {fileID: 0}
   methodTxt: {fileID: 5915832130089574432}
+--- !u!114 &5252511436227624082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261782976684401946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7da5a913d222e49a3842ba03d7148fe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2654972677091416156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261782976684401946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59833bcafcb89456faf396f87c0569bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5923575221117720621
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,7 +873,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2654972677091416156}
         m_TargetAssemblyTypeName: AcceptChanges, XDE
         m_MethodName: SaveChanges
         m_Mode: 1

@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 4761082860158751167}
   - component: {fileID: -5366749914929387021}
   - component: {fileID: 2781140474475041457}
-  - component: {fileID: 8211048892279044328}
+  - component: {fileID: 7837315785546582481}
   m_Layer: 5
   m_Name: Class
   m_TagString: Untagged
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59833bcafcb89456faf396f87c0569bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8211048892279044328
+--- !u!114 &7837315785546582481
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1465,9 +1465,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11500000, guid: 7da5a913d222e49a3842ba03d7148fe3, type: 3}
-        m_TargetAssemblyTypeName: UnityEngine.Object, UnityEngine
-        m_MethodName: 
+      - m_Target: {fileID: 7837315785546582481}
+        m_TargetAssemblyTypeName: DeclineChanges, XDE
+        m_MethodName: SaveChanges
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
