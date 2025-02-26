@@ -69,6 +69,7 @@ namespace UMSAGL.Scripts
 
         public GameObject AddNode()
         {
+            // TODO: depending on type of node use another prefab
             var go = Instantiate(nodePrefab, units);
             if (UIEditorManager.Instance.active)
                 go.GetComponentsInChildren<Button>(includeInactive: true).ForEach(x => x.gameObject.SetActive(true));

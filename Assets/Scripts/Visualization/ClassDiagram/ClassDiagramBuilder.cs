@@ -8,6 +8,7 @@ using Visualization.Animation;
 using Visualization.ClassDiagram.ClassComponents;
 using Visualization.ClassDiagram.Editors;
 using Visualization.ClassDiagram.Relations;
+using Visualization.ClassDiagram.Diagrams;
 using Visualization.UI;
 
 namespace Visualization.ClassDiagram
@@ -112,6 +113,7 @@ namespace Visualization.ClassDiagram
             }
 
             RenderClassesManual();
+            SuggestedDiagram.Test();
         }
     }
 }
