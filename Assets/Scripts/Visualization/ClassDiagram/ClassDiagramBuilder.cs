@@ -20,20 +20,24 @@ namespace Visualization.ClassDiagram
             var parser = diagramLoader.LoadDiagram(AnimationData.Instance.GetDiagramPath());
             var classList = parser.ParseClasses() ?? new List<Class>();
             var relationList = parser.ParseRelations() ?? new List<Relation>();
-            
+
             if (classList.Count == 0)
                 return;
             //Parse all data to our List of "Class" objects
+
+
+
+            // Spracovanie tried
             foreach (var currentClass in classList)
             {
+
                 currentClass.Name = currentClass.Name.Replace(" ", "_");
 
                 UIEditorManager.Instance.mainEditor.CreateNode(currentClass);
                 var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(currentClass.Name);
-
                 if (classInDiagram.ClassInfo == null)
                     continue;
-
+                
                 currentClass.Attributes ??= new List<Attribute>();
                 foreach (var attribute in currentClass.Attributes)
                 {
@@ -46,8 +50,12 @@ namespace Visualization.ClassDiagram
                 {
                     UIEditorManager.Instance.mainEditor.AddMethod(currentClass.Name, method);
                 }
-
+                
                 currentClass.Top *= -1;
+                
+
+                
+                
             }
 
 
@@ -56,6 +64,7 @@ namespace Visualization.ClassDiagram
                 UIEditorManager.Instance.mainEditor.CreateRelation(relation);
             }
         }
+
 
         public override void CreateGraph()
         {
