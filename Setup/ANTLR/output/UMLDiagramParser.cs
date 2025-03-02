@@ -19,6 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
+namespace AnimArch.UMLDiagram.Generated {
 using System;
 using System.IO;
 using System.Text;
@@ -114,12 +115,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitDiagram(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitDiagram(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -185,12 +180,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitElement(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitElement(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -252,12 +241,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitClassDefinition(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitClassDefinition(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -311,12 +294,6 @@ public partial class UMLDiagramParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitClassBody(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitClassBody(this);
-			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -374,12 +351,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitClassMember(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitClassMember(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -431,12 +402,6 @@ public partial class UMLDiagramParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitMethod(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMethod(this);
-			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -505,12 +470,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitMethodArguments(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMethodArguments(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -574,12 +533,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitMethodArgument(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMethodArgument(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -631,12 +584,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitRelation(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitRelation(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -680,12 +627,6 @@ public partial class UMLDiagramParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitRelationType(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitRelationType(this);
-			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -734,12 +675,6 @@ public partial class UMLDiagramParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitVisibility(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitVisibility(this);
-			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -790,12 +725,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitClassName(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitClassName(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -836,12 +765,6 @@ public partial class UMLDiagramParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitMethodName(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMethodName(this);
-			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -884,12 +807,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitArgumentName(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitArgumentName(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -931,12 +848,6 @@ public partial class UMLDiagramParser : Parser {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitReturnType(this);
 		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitReturnType(this);
-			else return visitor.VisitChildren(this);
-		}
 	}
 
 	[RuleVersion(0)]
@@ -977,12 +888,6 @@ public partial class UMLDiagramParser : Parser {
 		public override void ExitRule(IParseTreeListener listener) {
 			IUMLDiagramListener typedListener = listener as IUMLDiagramListener;
 			if (typedListener != null) typedListener.ExitType(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			IUMLDiagramVisitor<TResult> typedVisitor = visitor as IUMLDiagramVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitType(this);
-			else return visitor.VisitChildren(this);
 		}
 	}
 
@@ -1089,3 +994,4 @@ public partial class UMLDiagramParser : Parser {
 
 
 }
+} // namespace AnimArch.UMLDiagram.Generated
