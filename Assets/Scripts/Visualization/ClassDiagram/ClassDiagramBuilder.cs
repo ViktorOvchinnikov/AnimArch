@@ -111,7 +111,7 @@ namespace Visualization.ClassDiagram
                 k++;
                 AnimationData.Instance.diagramId++;
             }
-
+            
             RenderClassesManual();
             SuggestedDiagram.Test();
         }

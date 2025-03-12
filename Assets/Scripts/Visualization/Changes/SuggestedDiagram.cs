@@ -1,13 +1,21 @@
 using System.Collections.Generic;
+using Assets.Scripts.AnimationControl.UMLDiagram;
+using OALProgramControl;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using Visualization.Animation;
 
 
 public class SuggestedDiagram : MonoBehaviour
 {
     public static void Test()
     {
+        PlantUMLBuilder plantUmlBuilder = new PlantUMLBuilder();
+        string plantUMLString = plantUmlBuilder.GetDiagram();
+        Debug.Log(plantUMLString);
+        ClassDiagramManager p = UMLParserBridge.Parse(plantUMLString);
+        
         SetClassColorAndButtons("suggested_class", new Color(0f, 1f, 0f, 0.5f));
         SetClassColorAndButtons("HumanWarrior", new Color(1f, 0f, 0f, 0.5f));
         ActivateMethods("HumanRanger");
