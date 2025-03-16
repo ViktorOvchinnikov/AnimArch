@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public class GPTMessage: BaseModel
 {
-    private string apiKey;
+    private string apiKey = Token.RetrieveToken();
     private string apiUrl = "https://api.openai.com/v1/chat/completions";
     private string defaultQuestion = "Hello, how are you?";
 
@@ -39,7 +39,7 @@ public class GPTMessage: BaseModel
 
         string jsonRequest = JsonUtility.ToJson(requestData);
         byte[] jsonToSend = Encoding.UTF8.GetBytes(jsonRequest);
-
+        
         using (UnityWebRequest webRequest = new UnityWebRequest(apiUrl, "POST"))
         {
             webRequest.SetRequestHeader("Content-Type", "application/json");

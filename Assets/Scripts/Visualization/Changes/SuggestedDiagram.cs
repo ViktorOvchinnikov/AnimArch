@@ -5,16 +5,33 @@ using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 using Visualization.Animation;
+using System.Threading.Tasks;
 
 
 public class SuggestedDiagram : MonoBehaviour
 {
-    public static void Test()
+    public static async void Test()
     {
         PlantUMLBuilder plantUmlBuilder = new PlantUMLBuilder();
         string plantUMLString = plantUmlBuilder.GetDiagram();
-        Debug.Log(plantUMLString);
+        //Debug.Log(plantUMLString);
         ClassDiagramManager p = UMLParserBridge.Parse(plantUMLString);
+        
+        GPTMessage gptMessage = new GPTMessage();
+        string systemPrompt = @"
+                              Imagine you're an experienced software engineer. You will be given a UML diagram in the form of PlantUML code. Your task is to suggest a couple of small changes that the user would most likely want to make in the next step of their work. The changes don't have to be significant. Your limit on the number of changes: 3. Changes can be such as: 
+                              - Adding/Removing relations/classes/methods or class attributes
+                              - Changing the name of a class/method/attribute
+                              Your answer should contain only PlantUML code. (starting with the @startuml tag and ending with @enduml). The PlantUML code is provided below.;
+                              ";
+        
+        string fullPrompt = systemPrompt + "\n" + plantUMLString;
+        
+        GPTMessage message = new GPTMessage();
+
+        string response = await message.SendMessage("Hello how are you?");
+        
+        Debug.Log($"Response GPT: {response}");
         
         SetClassColorAndButtons("suggested_class", new Color(0f, 1f, 0f, 0.5f));
         SetClassColorAndButtons("HumanWarrior", new Color(1f, 0f, 0f, 0.5f));
