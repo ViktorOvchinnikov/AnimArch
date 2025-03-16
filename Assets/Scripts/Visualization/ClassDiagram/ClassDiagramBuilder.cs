@@ -1,14 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using Parsers;
-using UMSAGL.Scripts;
 using UnityEngine;
-using UnityEngine.UI;
 using Visualization.Animation;
 using Visualization.ClassDiagram.ClassComponents;
-using Visualization.ClassDiagram.Editors;
 using Visualization.ClassDiagram.Relations;
-using Visualization.ClassDiagram.Diagrams;
 using Visualization.UI;
 
 namespace Visualization.ClassDiagram
@@ -26,12 +20,9 @@ namespace Visualization.ClassDiagram
                 return;
             //Parse all data to our List of "Class" objects
 
-
-
             // Spracovanie tried
             foreach (var currentClass in classList)
             {
-
                 currentClass.Name = currentClass.Name.Replace(" ", "_");
 
                 UIEditorManager.Instance.mainEditor.CreateNode(currentClass);
@@ -53,38 +44,12 @@ namespace Visualization.ClassDiagram
                 }
                 
                 currentClass.Top *= -1;
-                
-
-                
-                
             }
-
 
             foreach (var relation in relationList)
             {
                 UIEditorManager.Instance.mainEditor.CreateRelation(relation);
             }
-        }
-
-
-        public override void CreateGraph()
-        {
-            UIEditorManager.Instance.mainEditor.ClearDiagram();
-            var graphGo = GameObject.Instantiate(DiagramPool.Instance.graphPrefab);
-            graphGo.name = "Graph";
-
-            DiagramPool.Instance.ClassDiagram.graph = graphGo.GetComponent<Graph>();
-            DiagramPool.Instance.ClassDiagram.graph.nodePrefab = DiagramPool.Instance.classPrefab;
-            GameObject.Find("DiagramPanel/Buttons/Edit").GetComponentInChildren<Button>().interactable = true;
-            GameObject.Find("AnimationPanel/Buttons/Load").GetComponentInChildren<Button>().interactable = true;
-            GameObject.Find("AnimationPanel/Buttons/Create").GetComponentInChildren<Button>().interactable = true;
-            GameObject.Find("MaskingPanel/Buttons/Load").GetComponentInChildren<Button>().interactable = true;
-        }
-
-        //Auto arrange objects in space
-        public void RenderClassesAuto()
-        {
-            DiagramPool.Instance.ClassDiagram.graph.Layout();
         }
 
         //Set layout as close as possible to EA layout
@@ -99,10 +64,8 @@ namespace Visualization.ClassDiagram
             }
         }
 
-        public override void LoadDiagram()
+        public override void FillDiagram()
         {
-            CreateGraph();
-            MakeNetworkedGraph();
             var k = 0;
             // A trick used to skip empty diagrams in XMI file from EA
             while (DiagramPool.Instance.ClassDiagram.Classes.Count < 1 && k < 10)
@@ -111,9 +74,11 @@ namespace Visualization.ClassDiagram
                 k++;
                 AnimationData.Instance.diagramId++;
             }
-            
+        }
+
+        public override void PositionClasses()
+        {
             RenderClassesManual();
-            SuggestedDiagram.Test();
         }
     }
 }

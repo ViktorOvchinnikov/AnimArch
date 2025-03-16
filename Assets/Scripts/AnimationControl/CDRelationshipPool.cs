@@ -104,6 +104,7 @@ namespace OALProgramControl
             }
             return Result;
         }
+        public List<CDRelationship> GetAllRelationships() => RelationshipPool.ToList();
 
         public List<(String, long, long)> GetAllRelationshipsTupples()
         {

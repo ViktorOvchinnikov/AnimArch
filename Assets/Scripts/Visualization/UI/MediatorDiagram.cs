@@ -1,7 +1,9 @@
+using OALProgramControl;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Visualization.Animation;
+using Visualization.ClassDiagram;
 
 namespace Visualization.UI
 {
@@ -79,8 +81,7 @@ namespace Visualization.UI
         private void OnLoadButtonClicked()
         {
             TooltipManager.Instance.HideTooltip();
-            Animation.Animation.Instance.CurrentProgramInstance.Reset();
-            FileLoader.Instance.OpenDiagram();
+            ClassDiagramUtils.ReloadClassDiagram();
             MenuManager.Instance.UnshowAnimation();
             MediatorMainPanel.SetActiveMainPanel(true);
             MediatorMainPanel.SetActiveCreationPanel(false);
