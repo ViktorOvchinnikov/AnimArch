@@ -91,6 +91,16 @@ public interface IUMLDiagramListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitMethod([NotNull] UMLDiagramParser.MethodContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="UMLDiagramParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAttribute([NotNull] UMLDiagramParser.AttributeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="UMLDiagramParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAttribute([NotNull] UMLDiagramParser.AttributeContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="UMLDiagramParser.methodArguments"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -180,6 +190,16 @@ public interface IUMLDiagramListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitReturnType([NotNull] UMLDiagramParser.ReturnTypeContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="UMLDiagramParser.attributeName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterAttributeName([NotNull] UMLDiagramParser.AttributeNameContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="UMLDiagramParser.attributeName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitAttributeName([NotNull] UMLDiagramParser.AttributeNameContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="UMLDiagramParser.type"/>.
 	/// </summary>

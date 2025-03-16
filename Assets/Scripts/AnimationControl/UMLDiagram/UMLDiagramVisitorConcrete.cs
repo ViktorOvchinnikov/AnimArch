@@ -75,6 +75,7 @@ namespace AnimationControl.UMLDiagram
             string methodName = Visit(context.methodName()) as string;
             string returnType = Visit(context.returnType()) as string;
             
+            
             if (string.IsNullOrEmpty(methodName))
             {
                 HandleError("Invalid method name", context);
@@ -83,8 +84,48 @@ namespace AnimationControl.UMLDiagram
             
             CDMethod method = new CDMethod(_currentClass, methodName, returnType);
             
+            if (context.methodArguments() != null)
+            {
+                foreach (var argContext in context.methodArguments().methodArgument())
+                {
+                    string argType = Visit(argContext.type()) as string;
+                    string argName = Visit(argContext.argumentName()) as string;
+
+                    if (string.IsNullOrEmpty(argType) || string.IsNullOrEmpty(argName))
+                    {
+                        HandleError($"Invalid method argument in method {methodName}", argContext);
+                        continue;
+                    }
+                    
+                    method.Parameters.Add(new CDParameter() { Name = argName, Type = argType });
+                }
+            }
+            
             _currentClass.AddMethod(method);
             return method;
+        }
+        
+        public override object VisitAttribute(UMLDiagramParser.AttributeContext context)
+        {
+            if (_currentClass == null)
+            {
+                HandleError("Attribute defined outside of class context", context);
+                return null;
+            }
+            
+            string attributeName = Visit(context.attributeName()) as string;
+            string attributeType = Visit(context.type()) as string;
+            
+            if (string.IsNullOrEmpty(attributeName))
+            {
+                HandleError("Invalid attribute name", context);
+                return null;
+            }
+        
+            CDAttribute attribute = new CDAttribute(attributeName, attributeType);
+            
+            _currentClass.AddAttribute(attribute);
+            return attribute;
         }
 
         public override object VisitMethodName(UMLDiagramParser.MethodNameContext context)
@@ -103,6 +144,11 @@ namespace AnimationControl.UMLDiagram
         }
         
         public override object VisitArgumentName(UMLDiagramParser.ArgumentNameContext context)
+        {
+            return context.NAME().GetText();
+        }
+        
+        public override object VisitAttributeName(UMLDiagramParser.AttributeNameContext context)
         {
             return context.NAME().GetText();
         }

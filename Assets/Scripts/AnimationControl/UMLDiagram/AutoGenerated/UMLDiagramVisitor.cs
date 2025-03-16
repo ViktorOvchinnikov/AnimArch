@@ -68,6 +68,12 @@ public interface IUMLDiagramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMethod([NotNull] UMLDiagramParser.MethodContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="UMLDiagramParser.attribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAttribute([NotNull] UMLDiagramParser.AttributeContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="UMLDiagramParser.methodArguments"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -121,6 +127,12 @@ public interface IUMLDiagramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitReturnType([NotNull] UMLDiagramParser.ReturnTypeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="UMLDiagramParser.attributeName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAttributeName([NotNull] UMLDiagramParser.AttributeNameContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="UMLDiagramParser.type"/>.
 	/// </summary>

@@ -20,10 +20,15 @@ classBody
 
 classMember
     :   method
+    |   attribute
     ;
 
 method
     :   visibility methodName '(' methodArguments? ')' ':' returnType
+    ;
+
+attribute
+    :   visibility attributeName (':' type)?
     ;
 
 methodArguments
@@ -68,6 +73,10 @@ argumentName
     ;
 
 returnType
+    :   NAME
+    ;
+
+attributeName
     :   NAME
     ;
 

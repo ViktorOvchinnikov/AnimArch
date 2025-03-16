@@ -108,6 +108,18 @@ public partial class UMLDiagramBaseListener : IUMLDiagramListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitMethod([NotNull] UMLDiagramParser.MethodContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="UMLDiagramParser.attribute"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAttribute([NotNull] UMLDiagramParser.AttributeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="UMLDiagramParser.attribute"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAttribute([NotNull] UMLDiagramParser.AttributeContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="UMLDiagramParser.methodArguments"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -215,6 +227,18 @@ public partial class UMLDiagramBaseListener : IUMLDiagramListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitReturnType([NotNull] UMLDiagramParser.ReturnTypeContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="UMLDiagramParser.attributeName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterAttributeName([NotNull] UMLDiagramParser.AttributeNameContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="UMLDiagramParser.attributeName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitAttributeName([NotNull] UMLDiagramParser.AttributeNameContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="UMLDiagramParser.type"/>.
 	/// <para>The default implementation does nothing.</para>
