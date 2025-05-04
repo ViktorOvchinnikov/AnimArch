@@ -40,7 +40,7 @@ namespace Visualization.ClassDiagram
                 {
                     List<string> methodParameters = methodData.Parameters.Select(param => string.Format("{0} {1}", param.Type, param.Name)).ToList();
                     newMethod = new Method(methodData.Name, methodData.Name, methodData.ReturnType, methodParameters);
-                    editor.AddMethod(newMethod.Name, newMethod);
+                    editor.AddMethod(newClass.Name, newMethod);
                 }
             }
 
