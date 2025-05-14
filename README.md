@@ -6,8 +6,8 @@ We initiated the development of a copilot system with the objective of enhancing
 
 ### Related links:
 
-[Presentation - PROJEKTOVÝ SEMINÁR (1)](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/AI_assisted_software_modelling_presentation-3.pdf)
-[Thesis skeleton](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/masters_thesis.pdf)
+- [Presentation - PROJEKTOVÝ SEMINÁR (1)](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/AI_assisted_software_modelling_presentation-3.pdf)
+- [Thesis skeleton](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/masters_thesis.pdf)
 
 # 🗓️ Weekly Work Log: March – May 2025
 
