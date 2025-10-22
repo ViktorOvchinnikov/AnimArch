@@ -33,7 +33,7 @@ public class GPTMessage: BaseModel
         {
             new Message { role = "user", content = userMessage }
         },
-            max_tokens = 100,
+            max_tokens = 3000,
             temperature = 0.7f
         };
 

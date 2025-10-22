@@ -45,5 +45,8 @@ namespace Visualization.ClassDiagram
         public ActivityDiagram ActivityDiagram;
 
         public List<InterGraphRelation> RelationsClassToObject = new();
+        
+        // DiffResult for storing diagram differences
+        public DiffResult CurrentDiffResult { get; set; }
     }
 }

@@ -59,10 +59,31 @@ namespace Visualization.ClassDiagram
         {
             if (relationshipGo == null) return;
             
-            var methodDeleteButton = relationshipGo.transform.Find($"DeleteButton/DeleteButton");
+            var positioner = relationshipGo.GetComponent<RelationshipButtonPositioner>();
+            if (positioner == null)
+            {
+                positioner = relationshipGo.AddComponent<RelationshipButtonPositioner>();
+                positioner.Initialize();
+            }
             
-            methodDeleteButton.gameObject.SetActive(true);
-            // methodEditButton.gameObject.SetActive(true);
+            var changesContainer = relationshipGo.transform.Find("ChangesVisualization");
+            if (changesContainer != null)
+            {
+                changesContainer.gameObject.SetActive(true);
+                
+                var acceptButton = changesContainer.Find("AcceptButton");
+                var deleteButton = changesContainer.Find("DeleteButton");
+                
+                if (acceptButton != null)
+                {
+                    acceptButton.gameObject.SetActive(true);
+                }
+                
+                if (deleteButton != null)
+                {
+                    deleteButton.gameObject.SetActive(true);
+                }
+            }
         }
 
         private static void ActivateMethod(string className, string methodName, Color color)
@@ -70,8 +91,8 @@ namespace Visualization.ClassDiagram
             GameObject classGo = GameObject.Find(className);
             if (classGo == null) return;
             
-            var methodDeleteButton = classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{methodName}/DeleteButton");
-            var methodEditButton = classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{methodName}/EditButton");
+            var methodDeleteButton = classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{methodName}/VisualizationAcceptButton");
+            var methodEditButton = classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{methodName}/VisualizationDeleteButton");
             var metodText =  classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{methodName}/MethodText");
             var component = metodText.gameObject.GetComponentInChildren<TMP_Text>().color = color;
             
