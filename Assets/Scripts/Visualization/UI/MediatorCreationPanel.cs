@@ -12,6 +12,7 @@ namespace Visualization.UI
         [SerializeField] private GameObject SaveButton;
         [SerializeField] private GameObject AddClass;
         [SerializeField] private GameObject AddRelation;
+        [SerializeField] private GameObject SuggestionsButton;
         public MediatorRightMenu MediatorRightMenu;
         public MediatorMainPanel MediatorMainPanel;
         public MediatorAddClassPopUp MediatorAddClassPopUp;
@@ -34,6 +35,10 @@ namespace Visualization.UI
             else if (ReferenceEquals(gameObject, AddRelation))
             {
                 OnAddRelationClicked();
+            }
+            else if (ReferenceEquals(gameObject, SuggestionsButton))
+            {
+                OnSuggestionsButtonClicked();
             }
             else
             {
@@ -61,6 +66,12 @@ namespace Visualization.UI
         {
             MediatorSelectionPopUp.SetActiveSelectionPopUp(true);
             MediatorSelectionPopUp.ActivateCreation();
+        }
+        
+        private void OnSuggestionsButtonClicked()
+        {
+            TooltipManager.Instance.HideTooltip();
+            SuggestedDiagram.ToggleSuggestions();
         }
 
         public void SetActiveCreationPanel(bool active)

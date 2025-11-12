@@ -34,6 +34,7 @@ public class AcceptChanges : MonoBehaviour
             return;
         }
 
+        List<CDClassMarked> classesToRemove = new List<CDClassMarked>();
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.CreateMark)
@@ -45,22 +46,37 @@ public class AcceptChanges : MonoBehaviour
                 Transform button = currentObject.transform.GetChild(0).GetChild(1);
                 button.gameObject.SetActive(false);
                 button2.gameObject.SetActive(false);
-                return;
+                
+                classesToRemove.Add(markedClass);
+                break;
             }
         }
+        foreach (var cls in classesToRemove)
+        {
+            currentDiff.ClassPoolMarked.GetClassPool().Remove(cls);
+            return;
+        }
 
+        classesToRemove.Clear();
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.DeleteMark)
             {
                 // Accept class deletion - destroy the object
                 Destroy(currentObject);
-                return;
+                classesToRemove.Add(markedClass);
+                break;
             }
+        }
+        foreach (var cls in classesToRemove)
+        {
+            currentDiff.ClassPoolMarked.GetClassPool().Remove(cls);
+            return;
         }
 
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
+            CDMethodMarked methodToRemove = null;
             foreach (var markedMethod in markedClass.WrappedMethods)
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.CreateMark)
@@ -69,29 +85,43 @@ public class AcceptChanges : MonoBehaviour
                     gameObject.transform.GetChild(2).GetComponent<TMP_Text>().color = Color.black;
                     gameObject.transform.GetChild(3).gameObject.SetActive(false);
                     gameObject.transform.GetChild(4).gameObject.SetActive(false);
-                    return;
+                    methodToRemove = markedMethod;
+                    break;
                 }
+            }
+            if (methodToRemove != null)
+            {
+                markedClass.WrappedMethods.Remove(methodToRemove);
+                return;
             }
         }
 
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
+            CDMethodMarked methodToRemove = null;
             foreach (var markedMethod in markedClass.WrappedMethods)
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.DeleteMark)
                 {
                     // Accept method deletion - destroy the object
                     Destroy(gameObject);
-                    return;
+                    methodToRemove = markedMethod;
+                    break;
                 }
+            }
+            if (methodToRemove != null)
+            {
+                markedClass.WrappedMethods.Remove(methodToRemove);
+                return;
             }
         }
 
+        MarkingDecorator<CDRelationship> relationshipToRemove = null;
         foreach (var markedRelationship in currentDiff.RelationshipPoolMarked.GetAllRelationships())
         {
             string relationshipName = $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}";
             string simplifiedObjectName = GetSimplifiedRelationshipName(currentObjectName);
-            Debug.Log($"Comparing relationship: '{simplifiedObjectName}' vs '{relationshipName}'");
+            // Debug.Log($"Comparing relationship: '{simplifiedObjectName}' vs '{relationshipName}'");
             if (simplifiedObjectName == relationshipName && markedRelationship.CreateMark)
             {
                 var line = currentObject.GetComponent<UILineRenderer>();
@@ -101,13 +131,20 @@ public class AcceptChanges : MonoBehaviour
                 }
                 
                 var acceptButton = currentObject.transform.Find($"ChangesVisualization/AcceptButton");
-                var declineButton = currentObject.transform.Find($"ChangesVisualization/DeleteButton");
+                var declineButton = currentObject.transform.Find($"ChangesVisualization/DeclineButton");
                 if (acceptButton != null) acceptButton.gameObject.SetActive(false);
                 if (declineButton != null) declineButton.gameObject.SetActive(false);
-                return;
+                relationshipToRemove = markedRelationship;
+                break;
             }
         }
+        if (relationshipToRemove != null)
+        {
+            currentDiff.RelationshipPoolMarked.GetAllRelationships().Remove(relationshipToRemove);
+            return;
+        }
 
+        relationshipToRemove = null;
         foreach (var markedRelationship in currentDiff.RelationshipPoolMarked.GetAllRelationships())
         {
             string relationshipName = $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}";
@@ -116,8 +153,14 @@ public class AcceptChanges : MonoBehaviour
             {
                 // Accept relationship deletion - destroy the object
                 Destroy(currentObject);
-                return;
+                relationshipToRemove = markedRelationship;
+                break;
             }
+        }
+        if (relationshipToRemove != null)
+        {
+            currentDiff.RelationshipPoolMarked.GetAllRelationships().Remove(relationshipToRemove);
+            return;
         }
     }
 }

@@ -731,6 +731,22 @@ MonoBehaviour:
     m_Localized: Pattern Catalogue
     m_Metadata:
       m_Items: []
+  - m_Id: 262361530210705408
+    m_Localized: Enable Suggestions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262361902836867072
+    m_Localized: Suggestions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262364327282991104
+    m_Localized: Accept All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262364332211298304
+    m_Localized: Reject All
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

@@ -240,5 +240,91 @@ namespace Visualization.ClassDiagram
             ProcessClasses();
             ProcessRelations();
         }
+
+        public void CleanupSuggestions()
+        {
+            if (diffResult == null) return;
+            
+            // Cleanup classes
+            foreach (CDClassMarked cdClass in diffResult.ClassPoolMarked.GetClassPool())
+            {
+                if (cdClass.CreateMark)
+                {
+                    editor.DeleteNode(cdClass.Inner.Name);
+                }
+                else if (cdClass.DeleteMark)
+                {
+                    // Restore original color for classes marked for deletion
+                    GameObject classGo = GameObject.Find(cdClass.Inner.Name);
+                    if (classGo != null)
+                    {
+                        Transform background = classGo.transform.GetChild(1);
+                        background.gameObject.GetComponent<Image>().color = Color.white;
+                        
+                        Transform button1 = classGo.transform.GetChild(0).GetChild(0);
+                        Transform button2 = classGo.transform.GetChild(0).GetChild(1);
+                        button1.gameObject.SetActive(false);
+                        button2.gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    // Cleanup modified methods
+                    foreach (CDMethodMarked cdMethod in cdClass.WrappedMethods)
+                    {
+                        if (cdMethod.CreateMark)
+                        {
+                            editor.DeleteMethod(cdClass.Inner.Name, cdMethod.Inner.Name);
+                        }
+                        else if (cdMethod.DeleteMark)
+                        {
+                            // Restore method color and hide buttons
+                            GameObject classGo = GameObject.Find(cdClass.Inner.Name);
+                            if (classGo != null)
+                            {
+                                var methodDeleteButton = classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{cdMethod.Inner.Name}/VisualizationAcceptButton");
+                                var methodEditButton = classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{cdMethod.Inner.Name}/VisualizationDeleteButton");
+                                var methodText = classGo.transform.Find($"Background/Methods/MethodLayoutGroup/{cdMethod.Inner.Name}/MethodText");
+                                
+                                if (methodText != null)
+                                {
+                                    methodText.gameObject.GetComponentInChildren<TMP_Text>().color = Color.black;
+                                }
+                                if (methodDeleteButton != null) methodDeleteButton.gameObject.SetActive(false);
+                                if (methodEditButton != null) methodEditButton.gameObject.SetActive(false);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Cleanup relationships
+            foreach (MarkingDecorator<CDRelationship> relationship in diffResult.RelationshipPoolMarked.GetAllRelationships())
+            {
+                GameObject relationshipGo = GetRelationshipGameObject(relationship.Inner);
+                if (relationshipGo == null) continue;
+                
+                if (relationship.CreateMark)
+                {
+                    Object.Destroy(relationshipGo);
+                }
+                else if (relationship.DeleteMark)
+                {
+                    // Restore relationship color
+                    var line = relationshipGo.GetComponent<UILineRenderer>();
+                    if (line != null)
+                    {
+                        line.color = Color.white;
+                    }
+                    
+                    // Hide buttons
+                    var changesContainer = relationshipGo.transform.Find("ChangesVisualization");
+                    if (changesContainer != null)
+                    {
+                        changesContainer.gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
     }
 }

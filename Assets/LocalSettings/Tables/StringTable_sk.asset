@@ -729,6 +729,22 @@ MonoBehaviour:
     m_Localized: "Katal\xF3g vzorov"
     m_Metadata:
       m_Items: []
+  - m_Id: 262361530210705408
+    m_Localized: "Zapnut' N\xE1vrhy"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262361902836867072
+    m_Localized: "N\xE1vrhy"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262364327282991104
+    m_Localized: "Prija\u0165 v\u0161etky"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262364332211298304
+    m_Localized: "Odmietnu\u0165 v\u0161etky"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds:

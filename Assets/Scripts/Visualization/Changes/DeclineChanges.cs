@@ -35,15 +35,23 @@ public class DeclineChanges : MonoBehaviour
             return;
         }
 
+        List<CDClassMarked> classesToRemove = new List<CDClassMarked>();
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.CreateMark)
             {
                 Destroy(currentObject);
-                return;
+                classesToRemove.Add(markedClass);
+                break;
             }
         }
+        foreach (var cls in classesToRemove)
+        {
+            currentDiff.ClassPoolMarked.GetClassPool().Remove(cls);
+            return;
+        }
 
+        classesToRemove.Clear();
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.DeleteMark)
@@ -55,25 +63,39 @@ public class DeclineChanges : MonoBehaviour
                 Transform button = currentObject.transform.GetChild(0).GetChild(1);
                 button.gameObject.SetActive(false);
                 button2.gameObject.SetActive(false);
-                return;
+                classesToRemove.Add(markedClass);
+                break;
             }
+        }
+        foreach (var cls in classesToRemove)
+        {
+            currentDiff.ClassPoolMarked.GetClassPool().Remove(cls);
+            return;
         }
 
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
+            CDMethodMarked methodToRemove = null;
             foreach (var markedMethod in markedClass.WrappedMethods)
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.CreateMark)
                 {
                     // Decline method creation - destroy the object
                     Destroy(gameObject);
-                    return;
+                    methodToRemove = markedMethod;
+                    break;
                 }
+            }
+            if (methodToRemove != null)
+            {
+                markedClass.WrappedMethods.Remove(methodToRemove);
+                return;
             }
         }
 
         foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
         {
+            CDMethodMarked methodToRemove = null;
             foreach (var markedMethod in markedClass.WrappedMethods)
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.DeleteMark)
@@ -82,11 +104,18 @@ public class DeclineChanges : MonoBehaviour
                     gameObject.transform.GetChild(2).GetComponent<TMP_Text>().color = Color.black;
                     gameObject.transform.GetChild(3).gameObject.SetActive(false);
                     gameObject.transform.GetChild(4).gameObject.SetActive(false);
-                    return;
+                    methodToRemove = markedMethod;
+                    break;
                 }
+            }
+            if (methodToRemove != null)
+            {
+                markedClass.WrappedMethods.Remove(methodToRemove);
+                return;
             }
         }
 
+        MarkingDecorator<CDRelationship> relationshipToRemove = null;
         foreach (var markedRelationship in currentDiff.RelationshipPoolMarked.GetAllRelationships())
         {
             string relationshipName = $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}";
@@ -95,10 +124,17 @@ public class DeclineChanges : MonoBehaviour
             {
                 // Decline relationship creation - destroy the object
                 Destroy(currentObject);
-                return;
+                relationshipToRemove = markedRelationship;
+                break;
             }
         }
+        if (relationshipToRemove != null)
+        {
+            currentDiff.RelationshipPoolMarked.GetAllRelationships().Remove(relationshipToRemove);
+            return;
+        }
 
+        relationshipToRemove = null;
         foreach (var markedRelationship in currentDiff.RelationshipPoolMarked.GetAllRelationships())
         {
             string relationshipName = $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}";
@@ -116,8 +152,14 @@ public class DeclineChanges : MonoBehaviour
                 var declineButton = currentObject.transform.Find($"ChangesVisualization/DeleteButton");
                 if (acceptButton != null) acceptButton.gameObject.SetActive(false);
                 if (declineButton != null) declineButton.gameObject.SetActive(false);
-                return;
+                relationshipToRemove = markedRelationship;
+                break;
             }
+        }
+        if (relationshipToRemove != null)
+        {
+            currentDiff.RelationshipPoolMarked.GetAllRelationships().Remove(relationshipToRemove);
+            return;
         }
     }
 }

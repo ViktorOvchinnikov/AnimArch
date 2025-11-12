@@ -36,171 +36,210 @@ public static class PlantUmlExtractor
 
 public class SuggestedDiagram : MonoBehaviour
 {
+    private static bool _suggestionsEnabled = false;
+    
+    public static bool SuggestionsEnabled
+    {
+        get => _suggestionsEnabled;
+        set => _suggestionsEnabled = value;
+    }
+    
+    public static void ToggleSuggestions()
+    {
+        _suggestionsEnabled = !_suggestionsEnabled;
+        
+        if (_suggestionsEnabled)
+        {
+            Debug.Log("Suggestions enabled - activating suggestions mode");
+            Test();
+        }
+        else
+        {
+            Debug.Log("Suggestions disabled - clearing suggestions");
+            ClearSuggestions();
+        }
+    }
+    
+    public static void ClearSuggestions()
+    {
+        if (DiagramPool.Instance.CurrentDiffResult != null)
+        {
+            ClassDiagramChangesVisualizer visualizer = new ClassDiagramChangesVisualizer(DiagramPool.Instance.CurrentDiffResult);
+            visualizer.CleanupSuggestions();
+            DiagramPool.Instance.CurrentDiffResult = null;
+        }
+        
+        if (DiagramPool.Instance.ClassDiagram?.graph != null)
+        {
+            DiagramPool.Instance.ClassDiagram.graph.Layout();
+        }
+    }
+    
     public static async void Test()
     {
         await Task.Delay(1000);
         PlantUMLBuilder plantUmlBuilder = new PlantUMLBuilder();
-        //string plantUMLString = plantUmlBuilder.GetDiagram();
-        string plantUMLString = @"
-@startuml
-class AbstractFactory {
-    + CreateWarrior() : Warrior
-    + CreateRanger() : Ranger
-    + CreateMage() : Mage
-}
-class Client {
-    + RunGame() : void
-}
-class ElvenFactory {
-    + CreateWarrior() : Warrior
-    + CreateRanger() : Ranger
-    + CreateMage() : Mage
-    + CreateWarrior() : Warrior
-    + CreateRanger() : Ranger
-    + CreateMage() : Mage
-}
-class ElvenMage {
-    + Attack() : void
-    + ChooseSpell() : void
-    + CastSpell() : void
-    + ElvenMage() : ElvenMage
-    + Attack() : void
-    + ChooseSpell() : void
-    + CastSpell() : void
-}
-class ElvenRanger {
-    + Attack() : void
-    + Hide() : void
-    + SneakAttack() : void
-    + ElvenRanger() : ElvenRanger
-    + Attack() : void
-    + Hide() : void
-    + SneakAttack() : void
-}
-class Game {
-    + CreateLevel() : void
-    + CreateElvenArmy() : void
-    + CreateTrollArmy() : void
-    + CreateHumanArmy() : void
-}
-class HumanFactory {
-    + CreateWarrior() : Warrior
-    + CreateRanger() : Ranger
-    + CreateMage() : Mage
-    + CreateWarrior() : Warrior
-    + CreateRanger() : Ranger
-    + CreateMage() : Mage
-}
-class HumanMage {
-    + Attack() : void
-    + ChooseSpell() : void
-    + CastSpell() : void
-    + HumanMage() : HumanMage
-    + Attack() : void
-    + ChooseSpell() : void
-    + CastSpell() : void
-    + DoIt1() : void
-    + DoIt2() : void
-}
-class HumanRanger {
-    + Attack() : void
-    + SneakAttack() : void
-    + HumanRanger() : HumanRanger
-    + Attack() : void
-    + SneakAttack() : void
-}
-class HumanWarrior {
-    + Provoke() : void
-    + Block() : void
-    + Attack() : void
-    + HumanWarrior() : HumanWarrior
-    + Provoke() : void
-    + Block() : void
-    + Attack() : void
-}
-class Mage {
-    + Attack() : void
-    + ChooseSpell() : void
-    + CastSpell() : void
-}
-class Ranger {
-    + Attack() : void
-    + Hide() : void
-    + SneakAttack() : void
-}
-class TrollFactory {
-    + CreateWarrior() : Warrior
-    + CreateRanger() : Ranger
-    + CreateMage() : Mage
-    + CreateWarrior() : Warrior
-    + CreateRanger() : Ranger
-    + CreateMage() : Mage
-}
-class TrollMage {
-    + Attack() : void
-    + ChooseSpell() : void
-    + CastSpell() : void
-    + TrollMage() : TrollMage
-    + Attack() : void
-    + ChooseSpell() : void
-    + CastSpell() : void
-}
-class TrollRanger {
-    + Attack() : void
-    + Hide() : void
-    + SneakAttack() : void
-    + TrollRanger() : TrollRanger
-    + Attack() : void
-    + Hide() : void
-    + SneakAttack() : void
-}
-class TrollWarrior {
-    + Provoke() : void
-    + Block() : void
-    + Attack() : void
-    + TrollWarrior() : TrollWarrior
-    + Provoke() : void
-    + Block() : void
-    + Attack() : void
-}
-class Warrior {
-    + Provoke() : void
-    + Block() : void
-    + Attack() : void
-}
-class SuperWarrior {
-    + Provoke() : void
-    + Block() : void
-    + Attack() : void
-}
-HumanFactory --|> AbstractFactory
-TrollFactory --|> AbstractFactory
-ElvenFactory --|> AbstractFactory
-Game --> AbstractFactory
-Client --> Game
-ElvenFactory --> ElvenRanger
-ElvenFactory --> ElvenMage
-Game --> ElvenFactory
-ElvenMage --|> Mage
-ElvenRanger --|> Ranger
-Game --> HumanFactory
-Game --> Mage
-Game --> Warrior
-Game --> TrollFactory
-Game --> Ranger
-HumanFactory --> HumanMage
-HumanFactory --> HumanRanger
-HumanFactory --> HumanWarrior
-HumanMage --|> Mage
-HumanRanger --|> Ranger
-HumanWarrior --|> Warrior
-TrollMage --|> Mage
-TrollRanger --|> Ranger
-TrollFactory --> TrollWarrior
-TrollFactory --> TrollRanger
-TrollFactory --> TrollMage
-HumanFactory --> Game
-@enduml";
+        string plantUMLString = plantUmlBuilder.GetDiagram();
+//         string plantUMLString = @"
+// @startuml
+// class AbstractFactory {
+//     + CreateWarrior() : Warrior
+//     + CreateRanger() : Ranger
+//     + CreateMage() : Mage
+// }
+// class Client {
+//     + RunGame() : void
+// }
+// class ElvenFactory {
+//     + CreateWarrior() : Warrior
+//     + CreateRanger() : Ranger
+//     + CreateMage() : Mage
+//     + CreateWarrior() : Warrior
+//     + CreateRanger() : Ranger
+//     + CreateMage() : Mage
+// }
+// class ElvenMage {
+//     + Attack() : void
+//     + ChooseSpell() : void
+//     + CastSpell() : void
+//     + ElvenMage() : ElvenMage
+//     + Attack() : void
+//     + ChooseSpell() : void
+//     + CastSpell() : void
+// }
+// class ElvenRanger {
+//     + Attack() : void
+//     + Hide() : void
+//     + SneakAttack() : void
+//     + ElvenRanger() : ElvenRanger
+//     + Attack() : void
+//     + Hide() : void
+//     + SneakAttack() : void
+// }
+// class Game {
+//     + CreateLevel() : void
+//     + CreateElvenArmy() : void
+//     + CreateTrollArmy() : void
+//     + CreateHumanArmy() : void
+// }
+// class HumanFactory {
+//     + CreateWarrior() : Warrior
+//     + CreateRanger() : Ranger
+//     + CreateMage() : Mage
+//     + CreateWarrior() : Warrior
+//     + CreateRanger() : Ranger
+//     + CreateMage() : Mage
+// }
+// class HumanMage {
+//     + Attack() : void
+//     + ChooseSpell() : void
+//     + CastSpell() : void
+//     + HumanMage() : HumanMage
+//     + Attack() : void
+//     + ChooseSpell() : void
+//     + CastSpell() : void
+//     + DoIt1() : void
+//     + DoIt2() : void
+// }
+// class HumanRanger {
+//     + Attack() : void
+//     + SneakAttack() : void
+//     + HumanRanger() : HumanRanger
+//     + Attack() : void
+//     + SneakAttack() : void
+// }
+// class HumanWarrior {
+//     + Provoke() : void
+//     + Block() : void
+//     + Attack() : void
+//     + HumanWarrior() : HumanWarrior
+//     + Provoke() : void
+//     + Block() : void
+//     + Attack() : void
+// }
+// class Mage {
+//     + Attack() : void
+//     + ChooseSpell() : void
+//     + CastSpell() : void
+// }
+// class Ranger {
+//     + Attack() : void
+//     + Hide() : void
+//     + SneakAttack() : void
+// }
+// class TrollFactory {
+//     + CreateWarrior() : Warrior
+//     + CreateRanger() : Ranger
+//     + CreateMage() : Mage
+//     + CreateWarrior() : Warrior
+//     + CreateRanger() : Ranger
+//     + CreateMage() : Mage
+// }
+// class TrollMage {
+//     + Attack() : void
+//     + ChooseSpell() : void
+//     + CastSpell() : void
+//     + TrollMage() : TrollMage
+//     + Attack() : void
+//     + ChooseSpell() : void
+//     + CastSpell() : void
+// }
+// class TrollRanger {
+//     + Attack() : void
+//     + Hide() : void
+//     + SneakAttack() : void
+//     + TrollRanger() : TrollRanger
+//     + Attack() : void
+//     + Hide() : void
+//     + SneakAttack() : void
+// }
+// class TrollWarrior {
+//     + Provoke() : void
+//     + Block() : void
+//     + Attack() : void
+//     + TrollWarrior() : TrollWarrior
+//     + Provoke() : void
+//     + Block() : void
+//     + Attack() : void
+// }
+// class Warrior {
+//     + Provoke() : void
+//     + Block() : void
+//     + Attack() : void
+// }
+// class SuperWarrior {
+//     + Provoke() : void
+//     + Block() : void
+//     + Attack() : void
+// }
+// HumanFactory --|> AbstractFactory
+// TrollFactory --|> AbstractFactory
+// ElvenFactory --|> AbstractFactory
+// Game --> AbstractFactory
+// Client --> Game
+// ElvenFactory --> ElvenRanger
+// ElvenFactory --> ElvenMage
+// Game --> ElvenFactory
+// ElvenMage --|> Mage
+// ElvenRanger --|> Ranger
+// Game --> HumanFactory
+// Game --> Mage
+// Game --> Warrior
+// Game --> TrollFactory
+// Game --> Ranger
+// HumanFactory --> HumanMage
+// HumanFactory --> HumanRanger
+// HumanFactory --> HumanWarrior
+// HumanMage --|> Mage
+// HumanRanger --|> Ranger
+// HumanWarrior --|> Warrior
+// TrollMage --|> Mage
+// TrollRanger --|> Ranger
+// TrollFactory --> TrollWarrior
+// TrollFactory --> TrollRanger
+// TrollFactory --> TrollMage
+// HumanFactory --> Game
+// @enduml";
         Debug.Log(plantUMLString);
         
         string systemPrompt = @"
@@ -215,12 +254,12 @@ Your answer should contain only PlantUML code. (starting with the @startuml tag 
         Debug.Log($"Request GPT: {fullPrompt}");
         
         // Send request
-        // GPTMessage message = new GPTMessage();
-        // string response = await message.SendMessage(fullPrompt);
-        // string extractedPlantUML = PlantUmlExtractor.Extract(response); 
-        // Debug.Log($"Response GPT: {response}");        
+        GPTMessage message = new GPTMessage();
+        string response = await message.SendMessage(fullPrompt);
+        string extractedPlantUML = PlantUmlExtractor.Extract(response); 
+        Debug.Log($"Response GPT: {response}");        
         
-        string extractedPlantUML = plantUMLString; 
+        //string extractedPlantUML = plantUMLString; 
         Debug.Log($"extracted Plant UML: {extractedPlantUML}");
         
         ClassDiagramManager manager = UMLParserBridge.Parse(extractedPlantUML);
@@ -233,9 +272,5 @@ Your answer should contain only PlantUML code. (starting with the @startuml tag 
         visualizer.Visualize();
         
         DiagramPool.Instance.ClassDiagram.graph.Layout();
-        
-        // SetClassColorAndButtons("suggested_class", new Color(0f, 1f, 0f, 0.5f));
-        // SetClassColorAndButtons("HumanWarrior", new Color(1f, 0f, 0f, 0.5f));
-        // ActivateMethods("HumanRanger");
     }
 }

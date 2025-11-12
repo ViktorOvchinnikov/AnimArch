@@ -20,7 +20,6 @@ namespace Visualization.ClassDiagram
             MakeNetworkedGraph();
             FillDiagram();
             PositionClasses();
-            SuggestedDiagram.Test();
         }
         public abstract void FillDiagram();
         public abstract void PositionClasses();

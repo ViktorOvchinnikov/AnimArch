@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AnimArch.Extensions;
 using Unity.Netcode;
 using UnityEngine;
@@ -76,8 +76,22 @@ namespace Visualization.UI
             if (DiagramPool.Instance.ClassDiagram.graph == null)
                 InitializeCreation();
             Debug.Assert(DiagramPool.Instance.ClassDiagram.graph);
+            
+            // Activate all buttons except suggestions buttons
             DiagramPool.Instance.ClassDiagram.graph.GetComponentsInChildren<Button>(includeInactive: true)
-                .ForEach(x => x.gameObject.SetActive(true));
+                .ForEach(x =>
+                {
+                    string buttonName = x.gameObject.name;
+                    if (buttonName == "AcceptButton" || 
+                        buttonName == "DeclineButton" ||
+                        buttonName == "VisualizationAcceptButton" || 
+                        buttonName == "VisualizationDeleteButton")
+                    {
+                        return;
+                    }
+                    x.gameObject.SetActive(true);
+                });
+            
             active = true;
         }
 

@@ -52,7 +52,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2248790300954624
-    m_Key: saveKey
+    m_Key: SuggestionsButto
     m_Metadata:
       m_Items: []
   - m_Id: 2249262525059072
@@ -741,6 +741,22 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 53906103811616768
     m_Key: PatternCatalogueLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262361530210705408
+    m_Key: SuggestionsButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262361902836867072
+    m_Key: SuggestionsMenuTxt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262364327282991104
+    m_Key: SuggestionsAcceptAllButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 262364332211298304
+    m_Key: SuggestionsRejectAllButton
     m_Metadata:
       m_Items: []
   m_Metadata:
