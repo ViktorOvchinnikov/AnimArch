@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,6 +9,7 @@ using Visualization.Animation;
 using Visualization.ClassDiagram.ClassComponents;
 using Visualization.ClassDiagram.ComponentsInDiagram;
 using Visualization.ClassDiagram.Relations;
+using EditorChangesHistory;
 using Attribute = Visualization.ClassDiagram.ClassComponents.Attribute;
 using Object = UnityEngine.Object;
 
@@ -133,6 +134,10 @@ namespace Visualization.ClassDiagram.Editors
                     UpdateMethod(otherClassInDiagram.ParsedClass.Name, method.Name, newMethod);
                 }
             }
+            
+            string serializedData = DiagramChangeSerializer.SerializeUpdateClass(oldName, newName);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.UpdateClass, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
         }
 
         public virtual void UpdateNodeGeometry(string name)
@@ -205,6 +210,11 @@ namespace Visualization.ClassDiagram.Editors
             ParsedEditor.UpdateMethod(classInDiagram, oldMethod, newMethod);
             CDEditor.UpdateMethod(classInDiagram, oldMethod, newMethod);
             _visualEditor.UpdateMethod(classInDiagram, oldMethod, newMethod);
+            
+            // TODO: Do I need to track changes in case if changed only targetClassName? (Parent class for the method)
+            string serializedData = DiagramChangeSerializer.SerializeUpdateMethod(targetClass, oldMethod, newMethod);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.UpdateMethod, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
         }
 
         public virtual void CreateRelation(Relation relation)
@@ -230,6 +240,11 @@ namespace Visualization.ClassDiagram.Editors
             _visualEditor.DeleteRelation(relationInDiagram);
 
             DiagramPool.Instance.ClassDiagram.Relations.Remove(relationInDiagram);
+            
+            // TODO: Should we track changes when deleted class and also show adjacent relations as deleted
+            string serializedData = DiagramChangeSerializer.SerializeAddRelation(relationInDiagram.ParsedRelation.FromClass, relationInDiagram.ParsedRelation.ToClass);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveRelation, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
         }
 
         private void DeleteNodeFromRelations(ClassInDiagram classInDiagram)
@@ -253,6 +268,10 @@ namespace Visualization.ClassDiagram.Editors
             _visualEditor.DeleteNode(classInDiagram);
 
             DiagramPool.Instance.ClassDiagram.Classes.Remove(classInDiagram);
+            
+            string serializedData = DiagramChangeSerializer.SerializeRemoveClass(className);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveClass, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
         }
 
         public virtual void DeleteAttribute(string className, string attributeName)
@@ -281,6 +300,10 @@ namespace Visualization.ClassDiagram.Editors
             ParsedEditor.DeleteMethod(classInDiagram, methodName);
             CDEditor.DeleteMethod(classInDiagram, methodName);
             _visualEditor.DeleteMethod(classInDiagram, methodName);
+            
+            string serializedData = DiagramChangeSerializer.SerializeRemoveMethod(className, methodName);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveMethod, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
         }
 
         public void ClearDiagram()

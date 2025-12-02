@@ -6,6 +6,8 @@ using UnityEngine;
 using Visualization.ClassDiagram;
 using Visualization.ClassDiagram.ClassComponents;
 using Visualization.UI.ClassComponentsManagers;
+using EditorChangesHistory;
+
 
 namespace Visualization.UI.PopUps
 {
@@ -71,6 +73,11 @@ namespace Visualization.UI.PopUps
             }
 
             UIEditorManager.Instance.mainEditor.AddMethod(className.text, newMethod);
+            
+            string serializedData = DiagramChangeSerializer.SerializeAddMethod(className.text, newMethod);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddMethod, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            
             Deactivate();
         }
 

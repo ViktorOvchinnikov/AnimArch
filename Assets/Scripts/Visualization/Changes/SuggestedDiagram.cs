@@ -10,12 +10,14 @@ using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Codice.Client.BaseCommands;
 using UnityEngine.UI.Extensions;
 using Visualization.ClassDiagram.Diagrams;
 using Visualization.ClassDiagram.Editors;
 using Visualization.ClassDiagram.MarkedDiagram;
 using Visualization.ClassDiagram.Relations;
 using Visualization.UI;
+using EditorChangesHistory;
 
 
 public static class PlantUmlExtractor
@@ -241,21 +243,20 @@ public class SuggestedDiagram : MonoBehaviour
 // HumanFactory --> Game
 // @enduml";
         Debug.Log(plantUMLString);
+        string changesHistory = DiagramChangeTracker.Instance.SerializeChanges();
         
         string systemPrompt = @"
                               Imagine you're an experienced software engineer. You will be given a UML diagram in the form of PlantUML code. Your task is to suggest a couple of small changes that the user would most likely want to make in the next step of their work. The changes don't have to be significant. Your limit on the number of changes: 3. Changes can be such as: 
 - Adding/Removing relations/classes/methods or class attributes
 - Changing the name of a class/method/attribute
 Your answer should contain only PlantUML code. (starting with the @startuml tag and ending with @enduml). Your answer should contain not only the changes, but simply all the code you received with your changes. The PlantUML code is provided below.;
-                              ";
+                              \n" + plantUMLString + "\n" + "Also you have provided a history of recent changes performed by user bellow:" + "\n" + changesHistory;
         
-        string fullPrompt = systemPrompt + "\n" + plantUMLString;
-        
-        Debug.Log($"Request GPT: {fullPrompt}");
+        Debug.Log($"Request GPT: {systemPrompt}");
         
         // Send request
         GPTMessage message = new GPTMessage();
-        string response = await message.SendMessage(fullPrompt);
+        string response = await message.SendMessage(systemPrompt);
         string extractedPlantUML = PlantUmlExtractor.Extract(response); 
         Debug.Log($"Response GPT: {response}");        
         

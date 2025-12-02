@@ -7,6 +7,7 @@ using Visualization.ClassDiagram;
 using Visualization.ClassDiagram.Editors;
 using Visualization.ClassDiagram.Relations;
 using Visualization.UI.PopUps;
+using EditorChangesHistory;
 
 namespace Visualization.UI
 {
@@ -159,6 +160,10 @@ namespace Visualization.UI
                 return;
             }
 
+            string serializedData = DiagramChangeSerializer.SerializeAddRelation(relation.SourceModelName, relation.TargetModelName);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddRelation, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            
             mainEditor.CreateRelation(relation);
             EndSelection();
         }

@@ -2,6 +2,7 @@
 using TMPro;
 using Visualization.ClassDiagram;
 using Visualization.ClassDiagram.ClassComponents;
+using EditorChangesHistory;
 
 namespace Visualization.UI.PopUps
 {
@@ -38,6 +39,11 @@ namespace Visualization.UI.PopUps
             }
 
             UIEditorManager.Instance.mainEditor.CreateNode(newClass);
+            
+            string serializedData = DiagramChangeSerializer.SerializeAddClass(newClass.Name);
+            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddClass, serializedData);
+            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            
             Deactivate();
         }
     }
