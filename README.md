@@ -7,7 +7,8 @@ We initiated the development of a copilot system with the objective of enhancing
 ### Related links:
 
 - [Presentation - PROJEKTOVÝ SEMINÁR (1)](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/AI_assisted_software_modelling_presentation-3.pdf)
-- [Thesis skeleton](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/masters_thesis.pdf)
+- [Presentation - PROJEKTOVÝ SEMINÁR (2)](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/AI_assisted_software_modelling_presentation-4.pdf)
+- [Thesis](https://github.com/ViktorOvchinnikov/AnimArch/blob/master/masters_thesis.pdf)
 
 # 🗓️ Weekly Work Log: March – May 2025
 
@@ -78,5 +79,86 @@ We initiated the development of a copilot system with the objective of enhancing
 - A presentation has been compiled.
 - The skeleton of the thesis has been drawn up.
 - **Development:** Fixed some bugs in the class for visualization.
+
+---
+
+
+# 🗓️ Weekly Work Log: Oct – Dec 2025
+
+## October 2025
+### 📅 Week 1: Sep 29 – Oct 5
+**Work done:**
+- Scheduled work for the semester
+
+---
+
+### 📅 Week 2: Oct 6 – Oct 12
+**Work done:**
+- ** Write related work chapter**: papers read last semester.
+- **Development:** Added the ability to accept and reject suggestions.
+
+---
+
+### 📅 Week 3: Oct 13 – Oct 19
+**Work done:**
+- ** Write related work chapter**: papers read last semester.
+- **Development:** Fixed some bugs in the visualization.
+
+---
+
+### 📅 Week 4: Oct 20 – Oct 26
+**Work done:**
+- ** Write related work chapter**: papers read last semester.
+- **Development:** Fixed some bugs in the functionality of accept and reject buttons.
+
+---
+
+### 📅 Week 5: Oct 27 – Nov 2
+**Work done:**
+- - ** Write related work chapter**: papers read last semester
+- **Development:** Finalisation of visualisation of changes.
+- **Read Study:** Mina Shehata, Blaire Lepore, Hailey Cummings, and Esteban Parra. Creating UML class diagrams with general-purpose llms. In 2024 IEEE Working Conference on Software Visualization (VISSOFT), pages 157–158, 2024.
+
+---
+
+## November 2025
+
+### 📅 Week 1: Nov 3 – Nov 9
+**Work done:**
+- **Read Study:** Meriem Ben Chaaben, Lola Burgueño, and Houari Sahraoui. Towards using few-shot prompt learning for automating model completion. In Proceedings of the 45th International Conference on Software Engineering: New Ideas and Emerging Results, ICSE-NIER ’23, page 7–12. IEEE Press, 2023.
+-  ** Write related work chapter**: read paper.
+- **Development:** Fixed some bugs in the visualization.
+
+---
+
+### 📅 Week 2: Nov 10 – Nov 16
+**Work done:**
+- **Read Study:** Douglas C Schmidt, Jesse Spencer-Smith, Quchen Fu, and Jules White. Towards a catalog of prompt patterns to enhance the discipline of prompt engineering. ACM SIGAda Ada Letters, 43(2):43–51, 2024.
+-  ** Write related work chapter**: read paper.
+- **Development:** Added tracking and logging of recent user changes to add to the prompt and improve the quality of suggestions.
+
+---
+
+### 📅 Week 3: Nov 17 – Nov 23
+**Work done:**
+- **Read Study:** Zhongchen Yuan, Li Yan, and Zongmin Ma. Structural similarity measure between uml class diagrams based on ucg. Requirements Engineering, 25(2):213–229, 2020.
+- ** Write chapter LLMs**: Xinyi Hou, Yanjie Zhao, Yue Liu, Zhou Yang, Kailong Wang, Li Li, Xiapu Luo, David Lo, John Grundy, and Haoyu Wang. Large language models for software engineering: A systematic literature review. ACM Trans. Softw. Eng. Methodol., 33(8), December 2024.
+- **Development:** Fixed some bugs in the logging of user changes.
+
+---
+
+### 📅 Week 4: Nov 24 – Nov 30
+**Work done:**
+- ** Write chapter  LLMs**: Angela Fan, Beliz Gokkaya, Mark Harman, Mitya Lyubarskiy, Shubho Sengupta, Shin Yoo, and Jie M Zhang. Large language models for software engineering: Survey and open problems. In 2023 IEEE/ACM International Conference on Software Engineering: Future of Software Engineering (ICSE-FoSE), pages 31–53. IEEE, 2023
+- **Development:** Tests suggestions using real LLM.
+
+---
+
+## December 2025
+### 📅 Week 1: Dec 1 – Dec 7
+**Work done:**
+- A presentation has been compiled.
+- Minor corrections to the thesis.
+- Started writing a section describing System Design
 
 ---
