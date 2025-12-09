@@ -116,7 +116,7 @@ We initiated the development of a copilot system with the objective of enhancing
 ### 📅 Week 5: Oct 27 – Nov 2
 **Work done:**
 - **Write related work chapter**: papers read last semester
-- **Development:** Finalisation of visualisation of changes.
+- **Development:** Finalization of visualization of changes.
 - **Read Study:** Mina Shehata, Blaire Lepore, Hailey Cummings, and Esteban Parra. Creating UML class diagrams with general-purpose llms. In 2024 IEEE Working Conference on Software Visualization (VISSOFT), pages 157–158, 2024.
 
 ---
