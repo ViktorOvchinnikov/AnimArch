@@ -94,28 +94,28 @@ We initiated the development of a copilot system with the objective of enhancing
 
 ### 📅 Week 2: Oct 6 – Oct 12
 **Work done:**
-- ** Write related work chapter**: papers read last semester.
+- **Write related work chapter**: papers read last semester.
 - **Development:** Added the ability to accept and reject suggestions.
 
 ---
 
 ### 📅 Week 3: Oct 13 – Oct 19
 **Work done:**
-- ** Write related work chapter**: papers read last semester.
+- **Write related work chapter**: papers read last semester.
 - **Development:** Fixed some bugs in the visualization.
 
 ---
 
 ### 📅 Week 4: Oct 20 – Oct 26
 **Work done:**
-- ** Write related work chapter**: papers read last semester.
+- **Write related work chapter**: papers read last semester.
 - **Development:** Fixed some bugs in the functionality of accept and reject buttons.
 
 ---
 
 ### 📅 Week 5: Oct 27 – Nov 2
 **Work done:**
-- - ** Write related work chapter**: papers read last semester
+- **Write related work chapter**: papers read last semester
 - **Development:** Finalisation of visualisation of changes.
 - **Read Study:** Mina Shehata, Blaire Lepore, Hailey Cummings, and Esteban Parra. Creating UML class diagrams with general-purpose llms. In 2024 IEEE Working Conference on Software Visualization (VISSOFT), pages 157–158, 2024.
 
@@ -126,7 +126,7 @@ We initiated the development of a copilot system with the objective of enhancing
 ### 📅 Week 1: Nov 3 – Nov 9
 **Work done:**
 - **Read Study:** Meriem Ben Chaaben, Lola Burgueño, and Houari Sahraoui. Towards using few-shot prompt learning for automating model completion. In Proceedings of the 45th International Conference on Software Engineering: New Ideas and Emerging Results, ICSE-NIER ’23, page 7–12. IEEE Press, 2023.
--  ** Write related work chapter**: read paper.
+-  **Write related work chapter**: read paper.
 - **Development:** Fixed some bugs in the visualization.
 
 ---
@@ -134,7 +134,7 @@ We initiated the development of a copilot system with the objective of enhancing
 ### 📅 Week 2: Nov 10 – Nov 16
 **Work done:**
 - **Read Study:** Douglas C Schmidt, Jesse Spencer-Smith, Quchen Fu, and Jules White. Towards a catalog of prompt patterns to enhance the discipline of prompt engineering. ACM SIGAda Ada Letters, 43(2):43–51, 2024.
--  ** Write related work chapter**: read paper.
+-  **Write related work chapter**: read paper.
 - **Development:** Added tracking and logging of recent user changes to add to the prompt and improve the quality of suggestions.
 
 ---
@@ -142,15 +142,15 @@ We initiated the development of a copilot system with the objective of enhancing
 ### 📅 Week 3: Nov 17 – Nov 23
 **Work done:**
 - **Read Study:** Zhongchen Yuan, Li Yan, and Zongmin Ma. Structural similarity measure between uml class diagrams based on ucg. Requirements Engineering, 25(2):213–229, 2020.
-- ** Write chapter LLMs**: Xinyi Hou, Yanjie Zhao, Yue Liu, Zhou Yang, Kailong Wang, Li Li, Xiapu Luo, David Lo, John Grundy, and Haoyu Wang. Large language models for software engineering: A systematic literature review. ACM Trans. Softw. Eng. Methodol., 33(8), December 2024.
+- **Write chapter LLMs**: Xinyi Hou, Yanjie Zhao, Yue Liu, Zhou Yang, Kailong Wang, Li Li, Xiapu Luo, David Lo, John Grundy, and Haoyu Wang. Large language models for software engineering: A systematic literature review. ACM Trans. Softw. Eng. Methodol., 33(8), December 2024.
 - **Development:** Fixed some bugs in the logging of user changes.
 
 ---
 
 ### 📅 Week 4: Nov 24 – Nov 30
 **Work done:**
-- ** Write chapter  LLMs**: Angela Fan, Beliz Gokkaya, Mark Harman, Mitya Lyubarskiy, Shubho Sengupta, Shin Yoo, and Jie M Zhang. Large language models for software engineering: Survey and open problems. In 2023 IEEE/ACM International Conference on Software Engineering: Future of Software Engineering (ICSE-FoSE), pages 31–53. IEEE, 2023
-- **Development:** Tests suggestions using real LLM.
+- **Write chapter  LLMs**: Angela Fan, Beliz Gokkaya, Mark Harman, Mitya Lyubarskiy, Shubho Sengupta, Shin Yoo, and Jie M Zhang. Large language models for software engineering: Survey and open problems. In 2023 IEEE/ACM International Conference on Software Engineering: Future of Software Engineering (ICSE-FoSE), pages 31–53. IEEE, 2023
+- **Development:** Tests suggestions with real LLM.
 
 ---
 
