@@ -39,11 +39,6 @@ namespace Visualization.UI.PopUps
             }
 
             UIEditorManager.Instance.mainEditor.CreateNode(newClass);
-            
-            string serializedData = DiagramChangeSerializer.SerializeAddClass(newClass.Name);
-            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddClass, serializedData);
-            DiagramChangeTracker.Instance.TrackChange(changeEvent);
-            
             Deactivate();
         }
     }

@@ -732,7 +732,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 262361530210705408
-    m_Localized: Enable Suggestions
+    m_Localized: Toggle Suggestions
     m_Metadata:
       m_Items: []
   - m_Id: 262361902836867072

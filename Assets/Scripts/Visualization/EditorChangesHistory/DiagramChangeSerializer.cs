@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Visualization.ClassDiagram.ClassComponents;
+using DiagramAttribute = Visualization.ClassDiagram.ClassComponents.Attribute;
+
 
 namespace EditorChangesHistory
 {
@@ -33,6 +35,35 @@ namespace EditorChangesHistory
     {
         public string targetClass;
         public string methodName;
+    }
+    
+    [Serializable]
+    public class AttributeObject
+    {
+        public string attributeName;
+        public string attributeType;
+    }
+
+    [Serializable]
+    public class AddAttributeData
+    {
+        public string targetClass;
+        public string attributeObject;
+    }
+
+    [Serializable]
+    public class UpdateAttributeData
+    {
+        public string targetClass;
+        public string oldAttribute;
+        public string newAttribute;
+    }
+
+    [Serializable]
+    public class RemoveAttributeData
+    {
+        public string targetClass;
+        public string attributeName;
     }
 
 	[Serializable]
@@ -81,7 +112,7 @@ namespace EditorChangesHistory
             };
 
             return JsonUtility.ToJson(data);
-        }	
+        }
 
         public static string SerializeAddMethod(string targetClass, Method method)
         {
@@ -116,6 +147,54 @@ namespace EditorChangesHistory
             {
                 targetClass = targetClass,
                 methodName = methodName
+            };
+            
+            return JsonUtility.ToJson(data);
+        }
+        
+        private static string _SerializeAttributeObject(DiagramAttribute attribute) 
+        {
+            var data = new AttributeObject
+            {
+                attributeName = attribute.Name,
+                attributeType = attribute.Type.ToString(),
+            };
+
+            return JsonUtility.ToJson(data);
+        }
+        
+        public static string SerializeAddAttribute(string targetClass, DiagramAttribute attribute)
+        {
+            string attributeObjectJson = _SerializeAttributeObject(attribute);
+            var data = new AddAttributeData
+            {
+                targetClass = targetClass,
+                attributeObject = attributeObjectJson
+            };
+            
+            return JsonUtility.ToJson(data);
+        }
+        
+        public static string SerializeUpdateAttribute(string targetClass, string oldAttribute, DiagramAttribute newAttribute)
+        {
+            string newAttributeObjectJson = _SerializeAttributeObject(newAttribute);
+
+            var data = new UpdateAttributeData
+            {
+                targetClass = targetClass,
+                oldAttribute = oldAttribute,
+                newAttribute = newAttributeObjectJson
+            };
+            
+            return JsonUtility.ToJson(data);
+        }
+
+        public static string SerializeRemoveAttribute(string targetClass, string attributeName)
+        {
+            var data = new RemoveAttributeData
+            {
+                targetClass = targetClass,
+                attributeName = attributeName
             };
             
             return JsonUtility.ToJson(data);

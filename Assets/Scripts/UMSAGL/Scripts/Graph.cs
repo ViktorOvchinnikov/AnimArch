@@ -72,7 +72,15 @@ namespace UMSAGL.Scripts
             // TODO: depending on type of node use another prefab
             var go = Instantiate(nodePrefab, units);
             if (UIEditorManager.Instance.active)
-                go.GetComponentsInChildren<Button>(includeInactive: true).ForEach(x => x.gameObject.SetActive(true));
+            {
+                go.GetComponentsInChildren<Button>(includeInactive: true).ForEach(x =>
+                {
+                    if (UIEditorManager.ShouldAutoActivateButton(x))
+                    {
+                        x.gameObject.SetActive(true);
+                    }
+                });
+            }
 
             //Following step required otherwise Size will return wrong rect
             Canvas.ForceUpdateCanvases();

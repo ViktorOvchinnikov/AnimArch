@@ -48,5 +48,6 @@ namespace Visualization.ClassDiagram
         
         // DiffResult for storing diagram differences
         public DiffResult CurrentDiffResult { get; set; }
+        public SuggestedDiagram SuggestedDiagram;
     }
 }

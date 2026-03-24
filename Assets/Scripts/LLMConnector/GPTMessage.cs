@@ -28,13 +28,13 @@ public class GPTMessage: BaseModel
     {
         var requestData = new RequestData
         {
-            model = "gpt-4",
+            model = "gpt-5.2",
             messages = new List<Message>
         {
             new Message { role = "user", content = userMessage }
         },
-            max_tokens = 3000,
-            temperature = 0.7f
+            max_completion_tokens = 10000,
+            temperature = 1f,
         };
 
         string jsonRequest = JsonUtility.ToJson(requestData);
@@ -85,7 +85,7 @@ public class GPTMessage: BaseModel
     {
         public string model;
         public List<Message> messages;
-        public int max_tokens;
+        public int max_completion_tokens;
         public float temperature;
     }
 

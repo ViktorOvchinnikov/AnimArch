@@ -1453,7 +1453,7 @@ GameObject:
   - component: {fileID: 1510230144274799478}
   - component: {fileID: 3233944253250008620}
   - component: {fileID: 4177576124710804152}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2173,7 +2173,7 @@ GameObject:
   - component: {fileID: 8083674017382309812}
   - component: {fileID: 9088055486795185698}
   - component: {fileID: 2259376445699590011}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DeleteClassButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2284,7 +2284,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2398271712557318398}
-        m_TargetAssemblyTypeName: AnimArch.Visualization.UI.ClassManager, XDE
+        m_TargetAssemblyTypeName: Visualization.UI.ClassComponentsManagers.ClassManager,
+          XDE
         m_MethodName: DeleteClass
         m_Mode: 1
         m_Arguments:

@@ -39,8 +39,11 @@ namespace EditorChangesHistory
 
         public void TrackChange(DiagramChangeEvent changeEvent)
         {
+            if (SuggestedDiagram.SuppressTracking)
+                return;
+
             _changes.Add(changeEvent);
-            Debug.Log(SerializeChanges());
+            SuggestedDiagram.HandleNextSuggestionsRetrieval(changeEvent);
         }
 
         public List<DiagramChangeEvent> GetChanges()

@@ -40,6 +40,14 @@ namespace Visualization.UI
             {
                 OnSuggestionsButtonClicked();
             }
+            else if (gameObject != null && gameObject.name == "SuggestionsAcceptAllButton")
+            {
+                AcceptChanges.SaveAllSuggestions();
+            }
+            else if (gameObject != null && gameObject.name == "SuggestionsRejectAllButton")
+            {
+                DeclineChanges.DeclineAllSuggestions();
+            }
             else
             {
                 OnClickedDefault(gameObject);

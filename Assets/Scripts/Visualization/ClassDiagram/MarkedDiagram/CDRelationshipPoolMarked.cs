@@ -19,6 +19,11 @@ namespace Visualization.ClassDiagram.MarkedDiagram
         }
         
         public List<MarkingDecorator<CDRelationship>> GetAllRelationships() => RelationshipPool.ToList();
+
+        public bool Remove(MarkingDecorator<CDRelationship> relationship)
+        {
+            return RelationshipPool.Remove(relationship);
+        }
         
     }
 }

@@ -82,11 +82,7 @@ namespace Visualization.UI
             DiagramPool.Instance.ClassDiagram.graph.GetComponentsInChildren<Button>(includeInactive: true)
                 .ForEach(x =>
                 {
-                    string buttonName = x.gameObject.name;
-                    if (buttonName == "AcceptButton" || 
-                        buttonName == "DeclineButton" ||
-                        buttonName == "VisualizationAcceptButton" || 
-                        buttonName == "VisualizationDeleteButton")
+                    if (!ShouldAutoActivateButton(x))
                     {
                         return;
                     }
@@ -110,6 +106,35 @@ namespace Visualization.UI
             if (DiagramPool.Instance.ClassDiagram.graph != null)
                 DiagramPool.Instance.ClassDiagram.graph.GetComponentsInChildren<GraphicRaycaster>()
                     .ForEach(x => x.enabled = enable);
+        }
+
+        public static bool ShouldAutoActivateButton(string buttonName)
+        {
+            return buttonName != "AcceptButton" &&
+                   buttonName != "DeclineButton" &&
+                   buttonName != "AcceptSuggestionButton" &&
+                   buttonName != "DeclineSuggestionButton" &&
+                   buttonName != "VisualizationAcceptButton" &&
+                   buttonName != "VisualizationDeleteButton";
+        }
+
+        public static bool ShouldAutoActivateButton(Button button)
+        {
+            if (button == null)
+                return false;
+
+            if (!ShouldAutoActivateButton(button.gameObject.name))
+                return false;
+
+            Transform current = button.transform;
+            while (current != null)
+            {
+                if (current.name == "ChangesVisualization")
+                    return false;
+                current = current.parent;
+            }
+
+            return true;
         }
 
         public void StartSelection(string newRelationType)

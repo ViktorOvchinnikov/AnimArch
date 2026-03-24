@@ -11,7 +11,13 @@ namespace Visualization.Networking
         {
             if (UIEditorManager.Instance.active)
                 GetComponentsInChildren<UnityEngine.UI.Button>(true)
-                    .ForEach(x => x.gameObject.SetActive(true));
+                    .ForEach(x =>
+                    {
+                        if (UIEditorManager.ShouldAutoActivateButton(x))
+                        {
+                            x.gameObject.SetActive(true);
+                        }
+                    });
         }
 
         [ServerRpc(RequireOwnership = false)]

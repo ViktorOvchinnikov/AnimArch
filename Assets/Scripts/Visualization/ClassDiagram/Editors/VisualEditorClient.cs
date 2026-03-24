@@ -18,8 +18,9 @@ namespace Visualization.ClassDiagram.Editors
             instance.GetComponent<AttributeManager>().classTxt =
                 GetNodeHeader(parentClass).GetComponent<TextMeshProUGUI>();
             if (UIEditorManager.Instance.active)
-                instance.GetComponentsInChildren<Button>(true)
-                    .ForEach(x => x.gameObject.SetActive(true));
+            {
+                ActivateButtonsForEditing(instance);
+            }
         }
 
         public void UpdateAttribute(string oldAttributeName, string newAttributeName, string attributeText, GameObject parentClass)
@@ -44,8 +45,9 @@ namespace Visualization.ClassDiagram.Editors
                 GetNodeHeader(parentClass).GetComponent<TextMeshProUGUI>();
 
             if (UIEditorManager.Instance.active)
-                instance.GetComponentsInChildren<Button>(true)
-                    .ForEach(x => x.gameObject.SetActive(true));
+            {
+                ActivateButtonsForEditing(instance);
+            }
         }
         public void UpdateMethod(string oldMethodName, string newMethodName, string methodText, GameObject parentClass)
         {

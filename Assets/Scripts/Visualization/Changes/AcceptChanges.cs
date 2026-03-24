@@ -1,6 +1,7 @@
 using UnityEngine; 
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Visualization.ClassDiagram;
 using Visualization.ClassDiagram.MarkedDiagram;
@@ -10,6 +11,12 @@ using UnityEngine.UI.Extensions;
 
 public class AcceptChanges : MonoBehaviour
 {
+    private static bool IsBulkAcceptButton(string objectName)
+    {
+        return objectName == "SuggestionsAcceptAllButton" ||
+               objectName == "AcceptAllSuggestionsButton";
+    }
+
     private static string GetSimplifiedRelationshipName(string gameObjectName)
     {
         int cloneIndex = gameObjectName.IndexOf("(Clone)");
@@ -22,10 +29,84 @@ public class AcceptChanges : MonoBehaviour
         
         return gameObjectName.Trim();
     }
+
+    private static bool IsMatchingRelationship(string currentObjectName, MarkingDecorator<CDRelationship> markedRelationship)
+    {
+        string simplifiedObjectName = GetSimplifiedRelationshipName(currentObjectName);
+        string relationshipName = $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}";
+
+        return string.Equals(simplifiedObjectName, relationshipName, System.StringComparison.Ordinal) ||
+               simplifiedObjectName.EndsWith(relationshipName, System.StringComparison.Ordinal) ||
+               simplifiedObjectName.IndexOf(relationshipName, System.StringComparison.Ordinal) >= 0;
+    }
+
+    private static void HideRelationshipSuggestionButtons(Transform relationTransform)
+    {
+        var changesContainer = relationTransform.Find("ChangesVisualization");
+        if (changesContainer == null)
+            return;
+
+        var acceptButton = changesContainer.Find("AcceptButton");
+        var deleteButton = changesContainer.Find("DeleteButton") ?? changesContainer.Find("DeclineButton");
+
+        if (acceptButton != null) acceptButton.gameObject.SetActive(false);
+        if (deleteButton != null) deleteButton.gameObject.SetActive(false);
+        changesContainer.gameObject.SetActive(false);
+    }
+
+    private static void HideMemberSuggestionButtons(Transform memberTransform)
+    {
+        var acceptButton = memberTransform.Find("VisualizationAcceptButton");
+        var deleteButton = memberTransform.Find("VisualizationDeleteButton");
+
+        if (acceptButton != null) acceptButton.gameObject.SetActive(false);
+        if (deleteButton != null) deleteButton.gameObject.SetActive(false);
+    }
+
+    private static void FinalizeMemberCreation(GameObject memberGo, string textChildName)
+    {
+        var textTransform = memberGo.transform.Find(textChildName);
+        if (textTransform != null)
+        {
+            var text = textTransform.GetComponent<TMP_Text>() ?? textTransform.GetComponentInChildren<TMP_Text>();
+            if (text != null)
+            {
+                text.color = Color.black;
+            }
+        }
+
+        HideMemberSuggestionButtons(memberGo.transform);
+    }
+
+    public static void SaveAllSuggestions()
+    {
+        var handlers = UnityEngine.Object.FindObjectsOfType<AcceptChanges>(true).ToList();
+        foreach (var handler in handlers)
+        {
+            if (handler == null || handler.gameObject == null)
+            {
+                continue;
+            }
+
+            if (IsBulkAcceptButton(handler.gameObject.name))
+            {
+                continue;
+            }
+
+            handler.SaveChanges();
+        }
+    }
+
     public void SaveChanges()
     {
         GameObject currentObject = gameObject;
         string currentObjectName = gameObject.name;
+
+        if (IsBulkAcceptButton(currentObjectName))
+        {
+            SaveAllSuggestions();
+            return;
+        }
         
         DiffResult currentDiff = DiagramPool.Instance.CurrentDiffResult;
         if (currentDiff == null)
@@ -82,9 +163,7 @@ public class AcceptChanges : MonoBehaviour
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.CreateMark)
                 {
                     // Accept method creation - change text color to black and hide buttons
-                    gameObject.transform.GetChild(2).GetComponent<TMP_Text>().color = Color.black;
-                    gameObject.transform.GetChild(3).gameObject.SetActive(false);
-                    gameObject.transform.GetChild(4).gameObject.SetActive(false);
+                    FinalizeMemberCreation(gameObject, "MethodText");
                     methodToRemove = markedMethod;
                     break;
                 }
@@ -116,40 +195,72 @@ public class AcceptChanges : MonoBehaviour
             }
         }
 
+        foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
+        {
+            MarkingDecorator<CDAttribute> attributeToRemove = null;
+            foreach (var markedAttribute in markedClass.WrappedAttributes)
+            {
+                if (markedAttribute.Inner.Name == currentObjectName && markedAttribute.CreateMark)
+                {
+                    // Accept attribute creation - change text color to black and hide buttons
+                    FinalizeMemberCreation(gameObject, "AttributeText");
+                    attributeToRemove = markedAttribute;
+                    break;
+                }
+            }
+            if (attributeToRemove != null)
+            {
+                markedClass.WrappedAttributes.Remove(attributeToRemove);
+                return;
+            }
+        }
+
+        foreach (var markedClass in currentDiff.ClassPoolMarked.GetClassPool())
+        {
+            MarkingDecorator<CDAttribute> attributeToRemove = null;
+            foreach (var markedAttribute in markedClass.WrappedAttributes)
+            {
+                if (markedAttribute.Inner.Name == currentObjectName && markedAttribute.DeleteMark)
+                {
+                    // Accept attribute deletion - destroy the object
+                    Destroy(gameObject);
+                    attributeToRemove = markedAttribute;
+                    break;
+                }
+            }
+            if (attributeToRemove != null)
+            {
+                markedClass.WrappedAttributes.Remove(attributeToRemove);
+                return;
+            }
+        }
+
         MarkingDecorator<CDRelationship> relationshipToRemove = null;
         foreach (var markedRelationship in currentDiff.RelationshipPoolMarked.GetAllRelationships())
         {
-            string relationshipName = $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}";
-            string simplifiedObjectName = GetSimplifiedRelationshipName(currentObjectName);
-            // Debug.Log($"Comparing relationship: '{simplifiedObjectName}' vs '{relationshipName}'");
-            if (simplifiedObjectName == relationshipName && markedRelationship.CreateMark)
+            if (IsMatchingRelationship(currentObjectName, markedRelationship) && markedRelationship.CreateMark)
             {
                 var line = currentObject.GetComponent<UILineRenderer>();
                 if (line != null)
                 {
                     line.color = Color.white;
                 }
-                
-                var acceptButton = currentObject.transform.Find($"ChangesVisualization/AcceptButton");
-                var declineButton = currentObject.transform.Find($"ChangesVisualization/DeclineButton");
-                if (acceptButton != null) acceptButton.gameObject.SetActive(false);
-                if (declineButton != null) declineButton.gameObject.SetActive(false);
+
+                HideRelationshipSuggestionButtons(currentObject.transform);
                 relationshipToRemove = markedRelationship;
                 break;
             }
         }
         if (relationshipToRemove != null)
         {
-            currentDiff.RelationshipPoolMarked.GetAllRelationships().Remove(relationshipToRemove);
+            currentDiff.RelationshipPoolMarked.Remove(relationshipToRemove);
             return;
         }
 
         relationshipToRemove = null;
         foreach (var markedRelationship in currentDiff.RelationshipPoolMarked.GetAllRelationships())
         {
-            string relationshipName = $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}";
-            string simplifiedObjectName = GetSimplifiedRelationshipName(currentObjectName);
-            if (simplifiedObjectName == relationshipName && markedRelationship.DeleteMark)
+            if (IsMatchingRelationship(currentObjectName, markedRelationship) && markedRelationship.DeleteMark)
             {
                 // Accept relationship deletion - destroy the object
                 Destroy(currentObject);
@@ -159,7 +270,7 @@ public class AcceptChanges : MonoBehaviour
         }
         if (relationshipToRemove != null)
         {
-            currentDiff.RelationshipPoolMarked.GetAllRelationships().Remove(relationshipToRemove);
+            currentDiff.RelationshipPoolMarked.Remove(relationshipToRemove);
             return;
         }
     }

@@ -99,6 +99,31 @@ namespace Visualization.ClassDiagram
             methodDeleteButton.gameObject.SetActive(true);
             methodEditButton.gameObject.SetActive(true);
         }
+
+        private static void ActivateAttribute(string className, string attributeName, Color color)
+        {
+            GameObject classGo = GameObject.Find(className);
+            if (classGo == null) return;
+
+            var attributeDeleteButton = classGo.transform.Find($"Background/Attributes/AttributeLayoutGroup/{attributeName}/VisualizationAcceptButton");
+            var attributeEditButton = classGo.transform.Find($"Background/Attributes/AttributeLayoutGroup/{attributeName}/VisualizationDeleteButton");
+            var attributeText = classGo.transform.Find($"Background/Attributes/AttributeLayoutGroup/{attributeName}/AttributeText");
+
+            if (attributeText != null)
+            {
+                attributeText.gameObject.GetComponentInChildren<TMP_Text>().color = color;
+            }
+
+            if (attributeDeleteButton != null)
+            {
+                attributeDeleteButton.gameObject.SetActive(true);
+            }
+
+            if (attributeEditButton != null)
+            {
+                attributeEditButton.gameObject.SetActive(true);
+            }
+        }
     
         private static void ActivateMethods(string className)
         {
@@ -148,7 +173,21 @@ namespace Visualization.ClassDiagram
 
         private void ProcessAttributes(CDClassMarked cdClass)
         {
-            
+            foreach (MarkingDecorator<CDAttribute> cdAttribute in cdClass.WrappedAttributes)
+            {
+                if (cdAttribute.CreateMark)
+                {
+                    Attribute newAttribute = new Attribute(cdAttribute.Inner.Name, cdAttribute.Inner.Name, cdAttribute.Inner.Type);
+                    UIEditorManager.Instance.mainEditor.AddAttribute(cdClass.Inner.Name, newAttribute, false);
+
+                    ActivateAttribute(cdClass.Inner.Name, cdAttribute.Inner.Name, Color.green);
+                }
+
+                if (cdAttribute.DeleteMark)
+                {
+                    ActivateAttribute(cdClass.Inner.Name, cdAttribute.Inner.Name, Color.red);
+                }
+            }
         }
         
         private void ProcessMethods(CDClassMarked cdClass)
@@ -159,7 +198,7 @@ namespace Visualization.ClassDiagram
                 {
                     List<string> methodParameters = cdMethod.Inner.Parameters.Select(param => string.Format("{0} {1}", param.Type, param.Name)).ToList();
                     Method newMethod = new Method(cdMethod.Inner.Name, cdMethod.Inner.Name, cdMethod.Inner.ReturnType, methodParameters);
-                    UIEditorManager.Instance.mainEditor.AddMethod(cdClass.Inner.Name, newMethod);
+                    UIEditorManager.Instance.mainEditor.AddMethod(cdClass.Inner.Name, newMethod, false);
                     
                     ActivateMethod(cdClass.Inner.Name, cdMethod.Inner.Name, Color.green);
                 }
@@ -174,19 +213,19 @@ namespace Visualization.ClassDiagram
         private void AddClass(CDClassMarked cdClass)
         {
             Class newClass = new Class ( cdClass.Inner.Name, cdClass.Inner.Name );
-            editor.CreateNode(newClass);
+            editor.CreateNode(newClass, false);
 
             foreach (CDAttribute attributeData in cdClass.Inner.GetAttributes())
             {
                 Attribute newAttribute = new Attribute(attributeData.Name, attributeData.Name, attributeData.Type);
-                editor.AddAttribute(newClass.Name, newAttribute);
+                editor.AddAttribute(newClass.Name, newAttribute, false);
             }
 
             foreach (CDMethod methodData in cdClass.Inner.GetMethods())
             {
                 List<string> methodParameters = methodData.Parameters.Select(param => string.Format("{0} {1}", param.Type, param.Name)).ToList();
                 Method newMethod = new Method(methodData.Name, methodData.Name, methodData.ReturnType, methodParameters);
-                editor.AddMethod(newClass.Name, newMethod);
+                editor.AddMethod(newClass.Name, newMethod, false);
             }
         }
 
@@ -208,8 +247,6 @@ namespace Visualization.ClassDiagram
                 ProcessMethods(cdClass);
                 ProcessAttributes(cdClass);
             }
-            
-           
         }
         
         private void ProcessRelations()
@@ -227,7 +264,7 @@ namespace Visualization.ClassDiagram
                         PropertiesEaType = "Association",
                         PropertiesDirection = "Source -> Destination"
                     };
-                    UIEditorManager.Instance.mainEditor.CreateRelation(newRelation);
+                    UIEditorManager.Instance.mainEditor.CreateRelation(newRelation, false);
                     HighlightRelationship(relationship);
                 }
 
@@ -250,7 +287,7 @@ namespace Visualization.ClassDiagram
             {
                 if (cdClass.CreateMark)
                 {
-                    editor.DeleteNode(cdClass.Inner.Name);
+                    editor.DeleteNode(cdClass.Inner.Name, false);
                 }
                 else if (cdClass.DeleteMark)
                 {
@@ -274,7 +311,7 @@ namespace Visualization.ClassDiagram
                     {
                         if (cdMethod.CreateMark)
                         {
-                            editor.DeleteMethod(cdClass.Inner.Name, cdMethod.Inner.Name);
+                            editor.DeleteMethod(cdClass.Inner.Name, cdMethod.Inner.Name, false);
                         }
                         else if (cdMethod.DeleteMark)
                         {
@@ -306,7 +343,7 @@ namespace Visualization.ClassDiagram
                 
                 if (relationship.CreateMark)
                 {
-                    Object.Destroy(relationshipGo);
+                    editor.DeleteRelation(relationshipGo, false);
                 }
                 else if (relationship.DeleteMark)
                 {
@@ -325,6 +362,8 @@ namespace Visualization.ClassDiagram
                     }
                 }
             }
+            
+            Debug.Log("CleanupSuggestions called.");
         }
     }
 }

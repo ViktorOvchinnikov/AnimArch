@@ -31,7 +31,7 @@ namespace Visualization.ClassDiagram.Editors
             Loader
         }
         
-        public virtual void CreateNode(Class newClass)
+        public virtual void CreateNode(Class newClass, bool trackChanges = true)
         {
             var newCdClass = CDEditor.CreateNode(newClass);
             newClass.Name = newCdClass.Name;
@@ -44,9 +44,16 @@ namespace Visualization.ClassDiagram.Editors
             var classInDiagram = new ClassInDiagram
                 { ParsedClass = newClass, ClassInfo = newCdClass, VisualObject = classGo };
             DiagramPool.Instance.ClassDiagram.Classes.Add(classInDiagram);
+            
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeAddClass(newClass.Name);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddClass, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
-        public virtual void UpdateNodeName(string oldName, string newName)
+        public virtual void UpdateNodeName(string oldName, string newName, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(oldName);
             if (classInDiagram == null)
@@ -134,10 +141,13 @@ namespace Visualization.ClassDiagram.Editors
                     UpdateMethod(otherClassInDiagram.ParsedClass.Name, method.Name, newMethod);
                 }
             }
-            
-            string serializedData = DiagramChangeSerializer.SerializeUpdateClass(oldName, newName);
-            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.UpdateClass, serializedData);
-            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeUpdateClass(oldName, newName);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.UpdateClass, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
         public virtual void UpdateNodeGeometry(string name)
@@ -147,7 +157,7 @@ namespace Visualization.ClassDiagram.Editors
                 ParsedEditor.UpdateNodeGeometry(classInDiagram.ParsedClass, classInDiagram.VisualObject);
         }
 
-        public virtual void AddAttribute(string targetClass, Attribute attribute)
+        public virtual void AddAttribute(string targetClass, Attribute attribute, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(targetClass);
             if (classInDiagram == null) return;
@@ -162,9 +172,16 @@ namespace Visualization.ClassDiagram.Editors
             ParsedEditor.AddAttribute(classInDiagram, attribute);
             CDEditor.AddAttribute(classInDiagram, attribute);
             _visualEditor.AddAttribute(classInDiagram, attribute);
+
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeAddAttribute(targetClass, attribute);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddAttribute, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
-        public virtual void UpdateAttribute(string targetClass, string oldAttribute, Attribute newAttribute)
+        public virtual void UpdateAttribute(string targetClass, string oldAttribute, Attribute newAttribute, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(targetClass);
             if (classInDiagram == null)
@@ -176,9 +193,16 @@ namespace Visualization.ClassDiagram.Editors
             ParsedEditor.UpdateAttribute(classInDiagram, oldAttribute, newAttribute);
             CDEditor.UpdateAttribute(classInDiagram, oldAttribute, newAttribute);
             _visualEditor.UpdateAttribute(classInDiagram, oldAttribute, newAttribute);
+
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeUpdateAttribute(targetClass, oldAttribute, newAttribute);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.UpdateAttribute, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
-        public virtual void AddMethod(string targetClass, Method method)
+        public virtual void AddMethod(string targetClass, Method method, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(targetClass);
             if (classInDiagram == null)
@@ -196,9 +220,16 @@ namespace Visualization.ClassDiagram.Editors
             ParsedEditor.AddMethod(classInDiagram, method);
             CDEditor.AddMethod(classInDiagram, method);
             _visualEditor.AddMethod(classInDiagram, method);
+
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeAddMethod(targetClass, method);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddMethod, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
-        public virtual void UpdateMethod(string targetClass, string oldMethod, Method newMethod)
+        public virtual void UpdateMethod(string targetClass, string oldMethod, Method newMethod, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(targetClass);
             if (classInDiagram == null)
@@ -212,12 +243,15 @@ namespace Visualization.ClassDiagram.Editors
             _visualEditor.UpdateMethod(classInDiagram, oldMethod, newMethod);
             
             // TODO: Do I need to track changes in case if changed only targetClassName? (Parent class for the method)
-            string serializedData = DiagramChangeSerializer.SerializeUpdateMethod(targetClass, oldMethod, newMethod);
-            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.UpdateMethod, serializedData);
-            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeUpdateMethod(targetClass, oldMethod, newMethod);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.UpdateMethod, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);    
+            }
         }
 
-        public virtual void CreateRelation(Relation relation)
+        public virtual void CreateRelation(Relation relation,  bool trackChanges = true)
         {
             relation.FromClass = relation.SourceModelName.Replace(" ", "_");
             relation.ToClass = relation.TargetModelName.Replace(" ", "_");
@@ -229,9 +263,16 @@ namespace Visualization.ClassDiagram.Editors
                 { ParsedRelation = relation, RelationInfo = cdRelation, VisualObject = relationGo };
             DiagramPool.Instance.ClassDiagram.AddRelation(relationInDiagram);
             DiagramPool.Instance.ClassDiagram.graph.UpdateGraph();
+            
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeAddRelation(relationInDiagram.ParsedRelation.FromClass, relationInDiagram.ParsedRelation.ToClass);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddRelation, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
-        public virtual void DeleteRelation(GameObject relation)
+        public virtual void DeleteRelation(GameObject relation, bool trackChanges = true)
         {
             var relationInDiagram = DiagramPool.Instance.ClassDiagram.Relations
                 .Find(x => x.VisualObject.Equals(relation));
@@ -242,9 +283,12 @@ namespace Visualization.ClassDiagram.Editors
             DiagramPool.Instance.ClassDiagram.Relations.Remove(relationInDiagram);
             
             // TODO: Should we track changes when deleted class and also show adjacent relations as deleted
-            string serializedData = DiagramChangeSerializer.SerializeAddRelation(relationInDiagram.ParsedRelation.FromClass, relationInDiagram.ParsedRelation.ToClass);
-            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveRelation, serializedData);
-            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeRemoveRelation(relationInDiagram.ParsedRelation.FromClass, relationInDiagram.ParsedRelation.ToClass);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveRelation, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
         private void DeleteNodeFromRelations(ClassInDiagram classInDiagram)
@@ -256,7 +300,7 @@ namespace Visualization.ClassDiagram.Editors
                 .ForEach(x => DeleteRelation(x.VisualObject));
         }
 
-        public virtual void DeleteNode(string className)
+        public virtual void DeleteNode(string className, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(className);
             if (classInDiagram == null)
@@ -268,13 +312,16 @@ namespace Visualization.ClassDiagram.Editors
             _visualEditor.DeleteNode(classInDiagram);
 
             DiagramPool.Instance.ClassDiagram.Classes.Remove(classInDiagram);
-            
-            string serializedData = DiagramChangeSerializer.SerializeRemoveClass(className);
-            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveClass, serializedData);
-            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeRemoveClass(className);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveClass, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
-        public virtual void DeleteAttribute(string className, string attributeName)
+        public virtual void DeleteAttribute(string className, string attributeName, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(className);
             if (classInDiagram == null)
@@ -286,9 +333,16 @@ namespace Visualization.ClassDiagram.Editors
             ParsedEditor.DeleteAttribute(classInDiagram, attributeName);
             CDEditor.DeleteAttribute(classInDiagram, attributeName);
             _visualEditor.DeleteAttribute(classInDiagram, attributeName);
+            
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeRemoveAttribute(className, attributeName);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveAttribute, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
-        public virtual void DeleteMethod(string className, string methodName)
+        public virtual void DeleteMethod(string className, string methodName, bool trackChanges = true)
         {
             var classInDiagram = DiagramPool.Instance.ClassDiagram.FindClassByName(className);
             if (classInDiagram == null)
@@ -300,10 +354,13 @@ namespace Visualization.ClassDiagram.Editors
             ParsedEditor.DeleteMethod(classInDiagram, methodName);
             CDEditor.DeleteMethod(classInDiagram, methodName);
             _visualEditor.DeleteMethod(classInDiagram, methodName);
-            
-            string serializedData = DiagramChangeSerializer.SerializeRemoveMethod(className, methodName);
-            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveMethod, serializedData);
-            DiagramChangeTracker.Instance.TrackChange(changeEvent);
+
+            if (trackChanges)
+            {
+                string serializedData = DiagramChangeSerializer.SerializeRemoveMethod(className, methodName);
+                DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.RemoveMethod, serializedData);
+                DiagramChangeTracker.Instance.TrackChange(changeEvent);
+            }
         }
 
         public void ClearDiagram()

@@ -39,7 +39,7 @@ namespace Visualization.Networking
                 return;
 
             var newClass = new Class(className, id);
-            UIEditorManager.Instance.mainEditor.CreateNode(newClass);
+            UIEditorManager.Instance.mainEditor.CreateNode(newClass, false);
         }
 
         [ClientRpc]
@@ -60,7 +60,7 @@ namespace Visualization.Networking
         {
             if (IsClient && !IsHost)
                 return;
-            UIEditorManager.Instance.mainEditor.UpdateNodeName(oldName, newName);
+            UIEditorManager.Instance.mainEditor.UpdateNodeName(oldName, newName, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -68,7 +68,7 @@ namespace Visualization.Networking
         {
             if (IsClient && !IsHost)
                 return;
-            UIEditorManager.Instance.mainEditor.DeleteNode(className);
+            UIEditorManager.Instance.mainEditor.DeleteNode(className, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -86,7 +86,7 @@ namespace Visualization.Networking
                 PropertiesEaType = type.Length > 1 ? type[1] : type[0],
                 PropertiesDirection = type.Length > 1 ? "none" : "Source -> Destination"
             };
-            UIEditorManager.Instance.mainEditor.CreateRelation(relation);
+            UIEditorManager.Instance.mainEditor.CreateRelation(relation, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -97,7 +97,7 @@ namespace Visualization.Networking
             var objects = NetworkManager.Singleton.SpawnManager.SpawnedObjects;
             var obj = objects[relationNetworkId];
             var classGo = obj.GetComponent<NetworkObject>().gameObject;
-            UIEditorManager.Instance.mainEditor.DeleteRelation(classGo);
+            UIEditorManager.Instance.mainEditor.DeleteRelation(classGo, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -113,7 +113,7 @@ namespace Visualization.Networking
                 Type = type,
                 Id = Guid.NewGuid().ToString()
             };
-            UIEditorManager.Instance.mainEditor.AddAttribute(targetClass, attribute);
+            UIEditorManager.Instance.mainEditor.AddAttribute(targetClass, attribute, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -126,7 +126,7 @@ namespace Visualization.Networking
                 Name = attributeName,
                 Type = type
             };
-            UIEditorManager.Instance.mainEditor.UpdateAttribute(targetClass, oldAttribute, attribute);
+            UIEditorManager.Instance.mainEditor.UpdateAttribute(targetClass, oldAttribute, attribute, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -135,7 +135,7 @@ namespace Visualization.Networking
             if (IsClient && !IsHost)
                 return;
 
-            UIEditorManager.Instance.mainEditor.DeleteAttribute(className, attributeName);
+            UIEditorManager.Instance.mainEditor.DeleteAttribute(className, attributeName, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -151,7 +151,7 @@ namespace Visualization.Networking
                 arguments = methodArguments.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new(),
                 Id = Guid.NewGuid().ToString()
         };
-            UIEditorManager.Instance.mainEditor.AddMethod(targetClass, newMethod);
+            UIEditorManager.Instance.mainEditor.AddMethod(targetClass, newMethod, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -166,7 +166,7 @@ namespace Visualization.Networking
                 ReturnValue = methodReturnValue,
                 arguments = methodArguments.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new()
             };
-            UIEditorManager.Instance.mainEditor.UpdateMethod(targetClass, oldMethod, newMethod);
+            UIEditorManager.Instance.mainEditor.UpdateMethod(targetClass, oldMethod, newMethod, false);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -175,7 +175,7 @@ namespace Visualization.Networking
             if (IsClient && !IsHost)
                 return;
 
-            UIEditorManager.Instance.mainEditor.DeleteMethod(className, methodName);
+            UIEditorManager.Instance.mainEditor.DeleteMethod(className, methodName, false);
         }
 
         [ClientRpc]

@@ -13,6 +13,17 @@ namespace Visualization.ClassDiagram.Editors
 {
     public class VisualEditor : IVisualEditor
     {
+        protected static void ActivateButtonsForEditing(GameObject root)
+        {
+            root.GetComponentsInChildren<Button>(true).ForEach(x =>
+            {
+                if (UIEditorManager.ShouldAutoActivateButton(x))
+                {
+                    x.gameObject.SetActive(true);
+                }
+            });
+        }
+
         public override void UpdateNodeName(GameObject classGo)
         {
             GetNodeHeader(classGo)
@@ -30,6 +41,12 @@ namespace Visualization.ClassDiagram.Editors
             var graphTransform = DiagramPool.Instance.ClassDiagram.graph.gameObject.GetComponent<Transform>();
             var graphUnits = graphTransform.Find("Units");
             nodeGo.GetComponent<Transform>().SetParent(graphUnits.GetComponent<Transform>());
+
+            if (UIEditorManager.Instance.active)
+            {
+                ActivateButtonsForEditing(nodeGo);
+            }
+
             return nodeGo;
         }
 
@@ -71,8 +88,9 @@ namespace Visualization.ClassDiagram.Editors
                 GetNodeHeader(classInDiagram.VisualObject).GetComponent<TextMeshProUGUI>();
 
             if (UIEditorManager.Instance.active)
-                instance.GetComponentsInChildren<Button>(true)
-                    .ForEach(x => x.gameObject.SetActive(true));
+            {
+                ActivateButtonsForEditing(instance);
+            }
         }
 
         public override void UpdateAttribute(ClassInDiagram classInDiagram, string oldAttribute, Attribute newAttribute)
@@ -108,8 +126,9 @@ namespace Visualization.ClassDiagram.Editors
                 GetNodeHeader(classInDiagram.VisualObject).GetComponent<TextMeshProUGUI>();
 
             if (UIEditorManager.Instance.active)
-                instance.GetComponentsInChildren<Button>(true)
-                    .ForEach(x => x.gameObject.SetActive(true));
+            {
+                ActivateButtonsForEditing(instance);
+            }
         }
 
         public override void UpdateMethod(ClassInDiagram classInDiagram, string oldMethod, Method newMethod)

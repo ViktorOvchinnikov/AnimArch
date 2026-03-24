@@ -74,10 +74,6 @@ namespace Visualization.UI.PopUps
 
             UIEditorManager.Instance.mainEditor.AddMethod(className.text, newMethod);
             
-            string serializedData = DiagramChangeSerializer.SerializeAddMethod(className.text, newMethod);
-            DiagramChangeEvent changeEvent = new DiagramChangeEvent(ChangeType.AddMethod, serializedData);
-            DiagramChangeTracker.Instance.TrackChange(changeEvent);
-            
             Deactivate();
         }
 
