@@ -58,6 +58,21 @@ namespace Visualization.Animation
             umlBuilder.AppendLine("@enduml");
         }
 
+        private string FormatAttributeType(string attributeType)
+        {
+            if (attributeType == "integer")
+            {
+                return "int";
+            }
+
+            if (attributeType == "boolean")
+            {
+                return "bool";
+            }
+            
+            return attributeType;
+        }
+
         private void AddClassesFromAnimation()
         {
             List<CDClass> classList = this.programInstance.ExecutionSpace.Classes;
@@ -73,7 +88,7 @@ namespace Visualization.Animation
                 {
                     foreach (CDAttribute attribute in attributes)
                     {
-                        umlBuilder.AppendLine($"    + {attribute.Name} : {attribute.Type}");
+                        umlBuilder.AppendLine($"    + {attribute.Name} : {FormatAttributeType(attribute.Type)}");
                     }
                 }
 

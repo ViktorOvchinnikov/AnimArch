@@ -81,6 +81,46 @@ namespace Visualization.ClassDiagram
         {
             return a.Name == b.Name;
         }
+
+        private static string NormalizeTypeNameForDiff(string typeName)
+        {
+            if (string.IsNullOrWhiteSpace(typeName))
+            {
+                return typeName;
+            }
+
+            string normalized = typeName.Trim();
+            int arrayDepth = 0;
+            while (normalized.EndsWith("[]", StringComparison.Ordinal))
+            {
+                normalized = normalized.Substring(0, normalized.Length - 2).Trim();
+                arrayDepth++;
+            }
+
+            normalized = EXETypes.ConvertEATypeName(normalized);
+
+            if (arrayDepth == 0)
+            {
+                return normalized;
+            }
+
+            return normalized + string.Concat(Enumerable.Repeat("[]", arrayDepth));
+        }
+
+        private static bool AreAttributesEqual(CDAttribute a, CDAttribute b)
+        {
+            if (a == null || b == null)
+            {
+                return false;
+            }
+
+            return string.Equals(a.Name, b.Name, StringComparison.Ordinal) &&
+                   string.Equals(
+                       NormalizeTypeNameForDiff(a.Type),
+                       NormalizeTypeNameForDiff(b.Type),
+                       StringComparison.Ordinal
+                   );
+        }
         
         private List<MarkingDecorator<CDParameter>> MakeDifferenceMethodParameters(CDMethod a, CDMethod b)
         {
@@ -113,11 +153,16 @@ namespace Visualization.ClassDiagram
         {
             List<MarkingDecorator<CDAttribute>> changedAttributes = new List<MarkingDecorator<CDAttribute>>();
             
-            List<CDAttribute> oldAttributes = a.GetAttributes();
-            List<CDAttribute> newAttributes = b.GetAttributes();
+            List<CDAttribute> oldAttributes = a.GetAttributes() ?? new List<CDAttribute>();
+            List<CDAttribute> newAttributes = b.GetAttributes() ?? new List<CDAttribute>();
             
-            List<CDAttribute> addedAttributes = oldAttributes.Where(p => !newAttributes.Contains(p)).ToList();
-            List<CDAttribute> removedAttributes = newAttributes.Where(p => !oldAttributes.Contains(p)).ToList();
+            List<CDAttribute> removedAttributes = oldAttributes
+                .Where(oldAttribute => !newAttributes.Any(newAttribute => AreAttributesEqual(oldAttribute, newAttribute)))
+                .ToList();
+            
+            List<CDAttribute> addedAttributes = newAttributes
+                .Where(newAttribute => !oldAttributes.Any(oldAttribute => AreAttributesEqual(oldAttribute, newAttribute)))
+                .ToList();
 
             foreach (var addedAttribute in addedAttributes) 
             {
