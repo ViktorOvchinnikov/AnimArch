@@ -32,10 +32,25 @@ namespace Visualization.ClassDiagram
 
             DiagramPool.Instance.ClassDiagram.graph = graphGo.GetComponent<Graph>();
             DiagramPool.Instance.ClassDiagram.graph.nodePrefab = DiagramPool.Instance.classPrefab;
-            GameObject.Find("DiagramPanel/Buttons/Edit").GetComponentInChildren<Button>().interactable = true;
-            GameObject.Find("AnimationPanel/Buttons/Load").GetComponentInChildren<Button>().interactable = true;
-            GameObject.Find("AnimationPanel/Buttons/Create").GetComponentInChildren<Button>().interactable = true;
-            GameObject.Find("MaskingPanel/Buttons/Load").GetComponentInChildren<Button>().interactable = true;
+            SetButtonInteractable("DiagramPanel/Buttons/Edit", true);
+            SetButtonInteractable("AnimationPanel/Buttons/Load", true);
+            SetButtonInteractable("AnimationPanel/Buttons/Create", true);
+            SetButtonInteractable("MaskingPanel/Buttons/Load", true);
+        }
+
+        private static void SetButtonInteractable(string path, bool interactable)
+        {
+            GameObject buttonObject = GameObject.Find(path);
+            if (buttonObject == null)
+            {
+                return;
+            }
+
+            Button button = buttonObject.GetComponentInChildren<Button>(includeInactive: true);
+            if (button != null)
+            {
+                button.interactable = interactable;
+            }
         }
         protected void RenderClassesAuto()
         {

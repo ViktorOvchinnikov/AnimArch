@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using TMPro;
 using Visualization.Animation;
+using Visualization.ABTesting;
 using Visualization.UI.PopUps;
 
 namespace Visualization.UI
@@ -13,10 +15,17 @@ namespace Visualization.UI
         [SerializeField] private GameObject AddClass;
         [SerializeField] private GameObject AddRelation;
         [SerializeField] private GameObject SuggestionsButton;
+        private const string CompleteTaskButtonText = "Complete Task";
+        private const string SidebarSectionTitle = "A/B Test";
         public MediatorRightMenu MediatorRightMenu;
         public MediatorMainPanel MediatorMainPanel;
         public MediatorAddClassPopUp MediatorAddClassPopUp;
         public MediatorSelectionPopUp MediatorSelectionPopUp;
+
+        private void Start()
+        {
+            ApplyABTestButtonLabels();
+        }
 
         public override void OnClicked(GameObject gameObject)
         {
@@ -79,12 +88,40 @@ namespace Visualization.UI
         private void OnSuggestionsButtonClicked()
         {
             TooltipManager.Instance.HideTooltip();
-            SuggestedDiagram.ToggleSuggestions();
+            if (!ABTestManager.TryCompleteCurrentTask(out string message))
+            {
+                Debug.LogWarning(message);
+                return;
+            }
+
+            Debug.Log(message);
         }
 
         public void SetActiveCreationPanel(bool active)
         {
             CreationPanel.SetActive(active);
+        }
+
+        private void ApplyABTestButtonLabels()
+        {
+            if (SuggestionsButton != null)
+            {
+                TMP_Text buttonText = SuggestionsButton.GetComponentInChildren<TMP_Text>(includeInactive: true);
+                if (buttonText != null)
+                {
+                    buttonText.text = CompleteTaskButtonText;
+                }
+            }
+
+            GameObject sectionTitleObject = GameObject.Find("SuggestionsMenuTxt");
+            if (sectionTitleObject != null)
+            {
+                TMP_Text sectionTitleText = sectionTitleObject.GetComponent<TMP_Text>();
+                if (sectionTitleText != null)
+                {
+                    sectionTitleText.text = SidebarSectionTitle;
+                }
+            }
         }
         
     }

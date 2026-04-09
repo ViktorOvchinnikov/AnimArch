@@ -98,6 +98,57 @@ public class AcceptChanges : MonoBehaviour
         HideMemberSuggestionButtons(memberGo.transform);
     }
 
+    private static Color GetDefaultClassBackgroundColor()
+    {
+        GameObject classPrefab = DiagramPool.Instance != null ? DiagramPool.Instance.classPrefab : null;
+        if (classPrefab == null)
+        {
+            return Color.white;
+        }
+
+        Transform background = classPrefab.transform.Find("Background");
+        if (background == null && classPrefab.transform.childCount > 1)
+        {
+            background = classPrefab.transform.GetChild(1);
+        }
+
+        Image backgroundImage = background != null ? background.GetComponent<Image>() : null;
+        return backgroundImage != null ? backgroundImage.color : Color.white;
+    }
+
+    private static void FinalizeClassCreation(GameObject classGo)
+    {
+        if (classGo == null)
+        {
+            return;
+        }
+
+        Transform background = classGo.transform.Find("Background");
+        if (background == null && classGo.transform.childCount > 1)
+        {
+            background = classGo.transform.GetChild(1);
+        }
+
+        Image backgroundImage = background != null ? background.GetComponent<Image>() : null;
+        if (backgroundImage != null)
+        {
+            backgroundImage.color = GetDefaultClassBackgroundColor();
+        }
+
+        if (classGo.transform.childCount > 0)
+        {
+            Transform controls = classGo.transform.GetChild(0);
+            if (controls.childCount > 0)
+            {
+                controls.GetChild(0).gameObject.SetActive(false);
+            }
+            if (controls.childCount > 1)
+            {
+                controls.GetChild(1).gameObject.SetActive(false);
+            }
+        }
+    }
+
     public static void SaveAllSuggestions()
     {
         var handlers = UnityEngine.Object.FindObjectsOfType<AcceptChanges>(true).ToList();
@@ -150,13 +201,7 @@ public class AcceptChanges : MonoBehaviour
             if (markedClass.Inner.Name == currentObjectName && markedClass.CreateMark)
             {
                 LogSuggestionAccept("class", "create", markedClass.Inner.Name);
-                // Accept class creation - change color to blue and hide buttons
-                Transform background2 = currentObject.transform.GetChild(1);
-                background2.gameObject.GetComponent<Image>().color = new Color(0f, 0f, 1f, 0.5f);
-                Transform button2 = currentObject.transform.GetChild(0).GetChild(0);
-                Transform button = currentObject.transform.GetChild(0).GetChild(1);
-                button.gameObject.SetActive(false);
-                button2.gameObject.SetActive(false);
+                FinalizeClassCreation(currentObject);
                 
                 classesToRemove.Add(markedClass);
                 break;
