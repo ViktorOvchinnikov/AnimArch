@@ -118,12 +118,14 @@ public class SuggestedDiagram : MonoBehaviour
         _timer?.OnUserAction();
 
         bool shouldScheduleRefresh = false;
+        bool shouldClearSuggestions = false;
 
         if (changeEvent.Type == ChangeType.AddClass ||
             changeEvent.Type == ChangeType.RemoveClass ||
             changeEvent.Type == ChangeType.UpdateClass)
         {
             _minorChangesCount = 0;
+            shouldClearSuggestions = true;
             shouldScheduleRefresh = true;
         }
         else if (changeEvent.Type == ChangeType.AddMethod ||
@@ -137,7 +139,7 @@ public class SuggestedDiagram : MonoBehaviour
         {
             if (_minorChangesCount == 0)
             {
-                ClearSuggestions();
+                shouldClearSuggestions = true;
             }
 
             _minorChangesCount++;
@@ -149,6 +151,11 @@ public class SuggestedDiagram : MonoBehaviour
             }
             
             Debug.Log($"Minor changes: {_minorChangesCount}");
+        }
+        
+        if (shouldClearSuggestions)
+        {
+            ClearSuggestions();
         }
 
         if (shouldScheduleRefresh)
@@ -195,6 +202,10 @@ public class SuggestedDiagram : MonoBehaviour
         catch (System.Exception ex)
         {
             Debug.LogError($"DebounceAndDisplayAsync failed: {ex}");
+            UXEventLogger.DebugLog("suggestions_debounce_error", new
+            {
+                error = ex.ToString()
+            });
         }
     }
     
@@ -330,6 +341,10 @@ public class SuggestedDiagram : MonoBehaviour
     private static async Task<SuggestionRequestResult> GetSuggestions(string requestPrompt, CancellationToken token)
     {
         Debug.Log($"Request GPT: {requestPrompt}");
+        UXEventLogger.DebugLog("llm_request", new
+        {
+            prompt = requestPrompt
+        });
 
         GPTMessage message = new GPTMessage();
 
@@ -338,6 +353,10 @@ public class SuggestedDiagram : MonoBehaviour
         token.ThrowIfCancellationRequested();
 
         Debug.Log($"Response GPT: {response}");
+        UXEventLogger.DebugLog("llm_response", new
+        {
+            response = response
+        });
 
         return new SuggestionRequestResult
         {
@@ -379,6 +398,13 @@ public class SuggestedDiagram : MonoBehaviour
                     if (retryNumber > 0)
                     {
                         Debug.LogWarning($"DisplaySuggestionsAsync retry attempt {retryNumber}/{maxRetries}. Prompt:\n{requestPrompt}");
+                        UXEventLogger.DebugLog("llm_retry", new
+                        {
+                            retryNumber,
+                            maxRetries,
+                            attempt,
+                            maxAttempts
+                        });
                     }
 
                     suggestionResult = await GetSuggestions(requestPrompt, token);
@@ -386,6 +412,12 @@ public class SuggestedDiagram : MonoBehaviour
                     if (token.IsCancellationRequested || myVersion != _requestVersion)
                     {
                         Debug.Log("Request has been cancelled");
+                        UXEventLogger.DebugLog("llm_request_canceled", new
+                        {
+                            reason = "token_or_version_mismatch",
+                            requestVersion = myVersion,
+                            currentRequestVersion = _requestVersion
+                        });
                         return;
                     }
 
@@ -410,6 +442,12 @@ public class SuggestedDiagram : MonoBehaviour
                     if (token.IsCancellationRequested || myVersion != _requestVersion)
                     {
                         Debug.Log("Request has been cancelled");
+                        UXEventLogger.DebugLog("llm_request_canceled", new
+                        {
+                            reason = "token_or_version_mismatch",
+                            requestVersion = myVersion,
+                            currentRequestVersion = _requestVersion
+                        });
                         return;
                     }
 
@@ -436,6 +474,12 @@ public class SuggestedDiagram : MonoBehaviour
                     if (token.IsCancellationRequested || myVersion != _requestVersion)
                     {
                         Debug.Log("Request has been cancelled");
+                        UXEventLogger.DebugLog("llm_request_canceled", new
+                        {
+                            reason = "token_or_version_mismatch",
+                            requestVersion = myVersion,
+                            currentRequestVersion = _requestVersion
+                        });
                         return;
                     }
 
@@ -454,6 +498,12 @@ public class SuggestedDiagram : MonoBehaviour
                     if (token.IsCancellationRequested || myVersion != _requestVersion)
                     {
                         Debug.Log("Request has been cancelled");
+                        UXEventLogger.DebugLog("llm_request_canceled", new
+                        {
+                            reason = "token_or_version_mismatch",
+                            requestVersion = myVersion,
+                            currentRequestVersion = _requestVersion
+                        });
                         return;
                     }
 
@@ -485,10 +535,23 @@ public class SuggestedDiagram : MonoBehaviour
 
                     previousExceptionDetails = ex.ToString();
                     Debug.LogWarning($"DisplaySuggestionsAsync attempt {attempt}/{maxAttempts} failed: {ex}");
+                    UXEventLogger.DebugLog("llm_attempt_failed", new
+                    {
+                        attempt,
+                        maxAttempts,
+                        retryNumber,
+                        maxRetries,
+                        error = ex.ToString()
+                    });
 
                     if (retryNumber == maxRetries)
                     {
                         Debug.LogError($"DisplaySuggestionsAsync retries are exhausted after {maxRetries} retries.");
+                        UXEventLogger.DebugLog("llm_retries_exhausted", new
+                        {
+                            maxRetries,
+                            finalError = ex.ToString()
+                        });
                     }
                 }
             }
@@ -496,10 +559,18 @@ public class SuggestedDiagram : MonoBehaviour
         catch (OperationCanceledException)
         {
             Debug.Log("Suggestions request canceled.");
+            UXEventLogger.DebugLog("llm_request_canceled", new
+            {
+                reason = "operation_canceled_exception"
+            });
         }
         catch (System.Exception ex)
         {
             Debug.LogError($"DisplaySuggestionsAsync failed: {ex}");
+            UXEventLogger.DebugLog("llm_display_failed", new
+            {
+                error = ex.ToString()
+            });
         }
     }
 }

@@ -8,9 +8,29 @@ using Visualization.ClassDiagram;
 using Visualization.ClassDiagram.MarkedDiagram;
 using OALProgramControl;
 using UnityEngine.UI.Extensions;
+using EditorChangesHistory;
 
 public class DeclineChanges : MonoBehaviour
 {
+    private static void LogSuggestionReject(
+        string targetType,
+        string changeType,
+        string targetName,
+        string ownerClass = null,
+        string fromClass = null,
+        string toClass = null)
+    {
+        UXEventLogger.DebugLog("suggestion_reject", new
+        {
+            targetType,
+            changeType,
+            targetName,
+            ownerClass,
+            fromClass,
+            toClass
+        });
+    }
+
     private static bool IsBulkRejectButton(string objectName)
     {
         return objectName == "SuggestionsRejectAllButton" ||
@@ -67,6 +87,11 @@ public class DeclineChanges : MonoBehaviour
     public static void DeclineAllSuggestions()
     {
         var handlers = UnityEngine.Object.FindObjectsOfType<DeclineChanges>(true).ToList();
+        UXEventLogger.DebugLog("suggestion_reject_all_clicked", new
+        {
+            handlersCount = handlers.Count
+        });
+
         foreach (var handler in handlers)
         {
             if (handler == null || handler.gameObject == null)
@@ -97,7 +122,11 @@ public class DeclineChanges : MonoBehaviour
         DiffResult currentDiff = DiagramPool.Instance.CurrentDiffResult;
         if (currentDiff == null)
         {
-            // Debug.LogWarning("DiffResult not found in DiagramPool");
+            UXEventLogger.DebugLog("suggestion_reject_skipped", new
+            {
+                reason = "current_diff_missing",
+                objectName = currentObjectName
+            });
             return;
         }
 
@@ -106,6 +135,7 @@ public class DeclineChanges : MonoBehaviour
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.CreateMark)
             {
+                LogSuggestionReject("class", "create", markedClass.Inner.Name);
                 Destroy(currentObject);
                 classesToRemove.Add(markedClass);
                 break;
@@ -122,6 +152,7 @@ public class DeclineChanges : MonoBehaviour
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.DeleteMark)
             {
+                LogSuggestionReject("class", "delete", markedClass.Inner.Name);
                 // Decline class deletion - change color to blue and hide buttons
                 Transform background2 = currentObject.transform.GetChild(1);
                 background2.gameObject.GetComponent<Image>().color = new Color(0f, 0f, 1f, 0.5f);
@@ -146,6 +177,7 @@ public class DeclineChanges : MonoBehaviour
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.CreateMark)
                 {
+                    LogSuggestionReject("method", "create", markedMethod.Inner.Name, markedClass.Inner.Name);
                     // Decline method creation - destroy the object
                     Destroy(gameObject);
                     methodToRemove = markedMethod;
@@ -166,6 +198,7 @@ public class DeclineChanges : MonoBehaviour
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.DeleteMark)
                 {
+                    LogSuggestionReject("method", "delete", markedMethod.Inner.Name, markedClass.Inner.Name);
                     // Decline method deletion - change text color to black and hide buttons
                     FinalizeMemberDeletionDecline(gameObject, "MethodText");
                     methodToRemove = markedMethod;
@@ -186,6 +219,7 @@ public class DeclineChanges : MonoBehaviour
             {
                 if (markedAttribute.Inner.Name == currentObjectName && markedAttribute.CreateMark)
                 {
+                    LogSuggestionReject("attribute", "create", markedAttribute.Inner.Name, markedClass.Inner.Name);
                     // Decline attribute creation - destroy the object
                     Destroy(gameObject);
                     attributeToRemove = markedAttribute;
@@ -206,6 +240,7 @@ public class DeclineChanges : MonoBehaviour
             {
                 if (markedAttribute.Inner.Name == currentObjectName && markedAttribute.DeleteMark)
                 {
+                    LogSuggestionReject("attribute", "delete", markedAttribute.Inner.Name, markedClass.Inner.Name);
                     // Decline attribute deletion - restore text color and hide buttons
                     FinalizeMemberDeletionDecline(gameObject, "AttributeText");
                     attributeToRemove = markedAttribute;
@@ -224,6 +259,13 @@ public class DeclineChanges : MonoBehaviour
         {
             if (IsMatchingRelationship(currentObjectName, markedRelationship) && markedRelationship.CreateMark)
             {
+                LogSuggestionReject(
+                    "relation",
+                    "create",
+                    $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}",
+                    fromClass: markedRelationship.Inner.FromClass,
+                    toClass: markedRelationship.Inner.ToClass);
+
                 // Decline relationship creation - destroy the object
                 Destroy(currentObject);
                 relationshipToRemove = markedRelationship;
@@ -241,6 +283,13 @@ public class DeclineChanges : MonoBehaviour
         {
             if (IsMatchingRelationship(currentObjectName, markedRelationship) && markedRelationship.DeleteMark)
             {
+                LogSuggestionReject(
+                    "relation",
+                    "delete",
+                    $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}",
+                    fromClass: markedRelationship.Inner.FromClass,
+                    toClass: markedRelationship.Inner.ToClass);
+
                 // Decline relationship deletion - change color to red and hide buttons
                 var line = currentObject.GetComponent<UILineRenderer>();
                 if (line != null)

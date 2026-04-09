@@ -7,10 +7,30 @@ using Visualization.ClassDiagram;
 using Visualization.ClassDiagram.MarkedDiagram;
 using OALProgramControl;
 using UnityEngine.UI.Extensions;
+using EditorChangesHistory;
 
 
 public class AcceptChanges : MonoBehaviour
 {
+    private static void LogSuggestionAccept(
+        string targetType,
+        string changeType,
+        string targetName,
+        string ownerClass = null,
+        string fromClass = null,
+        string toClass = null)
+    {
+        UXEventLogger.DebugLog("suggestion_accept", new
+        {
+            targetType,
+            changeType,
+            targetName,
+            ownerClass,
+            fromClass,
+            toClass
+        });
+    }
+
     private static bool IsBulkAcceptButton(string objectName)
     {
         return objectName == "SuggestionsAcceptAllButton" ||
@@ -81,6 +101,11 @@ public class AcceptChanges : MonoBehaviour
     public static void SaveAllSuggestions()
     {
         var handlers = UnityEngine.Object.FindObjectsOfType<AcceptChanges>(true).ToList();
+        UXEventLogger.DebugLog("suggestion_accept_all_clicked", new
+        {
+            handlersCount = handlers.Count
+        });
+
         foreach (var handler in handlers)
         {
             if (handler == null || handler.gameObject == null)
@@ -111,7 +136,11 @@ public class AcceptChanges : MonoBehaviour
         DiffResult currentDiff = DiagramPool.Instance.CurrentDiffResult;
         if (currentDiff == null)
         {
-            // Debug.LogWarning("DiffResult not found in DiagramPool");
+            UXEventLogger.DebugLog("suggestion_accept_skipped", new
+            {
+                reason = "current_diff_missing",
+                objectName = currentObjectName
+            });
             return;
         }
 
@@ -120,6 +149,7 @@ public class AcceptChanges : MonoBehaviour
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.CreateMark)
             {
+                LogSuggestionAccept("class", "create", markedClass.Inner.Name);
                 // Accept class creation - change color to blue and hide buttons
                 Transform background2 = currentObject.transform.GetChild(1);
                 background2.gameObject.GetComponent<Image>().color = new Color(0f, 0f, 1f, 0.5f);
@@ -143,6 +173,7 @@ public class AcceptChanges : MonoBehaviour
         {
             if (markedClass.Inner.Name == currentObjectName && markedClass.DeleteMark)
             {
+                LogSuggestionAccept("class", "delete", markedClass.Inner.Name);
                 // Accept class deletion - destroy the object
                 Destroy(currentObject);
                 classesToRemove.Add(markedClass);
@@ -162,6 +193,7 @@ public class AcceptChanges : MonoBehaviour
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.CreateMark)
                 {
+                    LogSuggestionAccept("method", "create", markedMethod.Inner.Name, markedClass.Inner.Name);
                     // Accept method creation - change text color to black and hide buttons
                     FinalizeMemberCreation(gameObject, "MethodText");
                     methodToRemove = markedMethod;
@@ -182,6 +214,7 @@ public class AcceptChanges : MonoBehaviour
             {
                 if (markedMethod.Inner.Name == currentObjectName && markedMethod.DeleteMark)
                 {
+                    LogSuggestionAccept("method", "delete", markedMethod.Inner.Name, markedClass.Inner.Name);
                     // Accept method deletion - destroy the object
                     Destroy(gameObject);
                     methodToRemove = markedMethod;
@@ -202,6 +235,7 @@ public class AcceptChanges : MonoBehaviour
             {
                 if (markedAttribute.Inner.Name == currentObjectName && markedAttribute.CreateMark)
                 {
+                    LogSuggestionAccept("attribute", "create", markedAttribute.Inner.Name, markedClass.Inner.Name);
                     // Accept attribute creation - change text color to black and hide buttons
                     FinalizeMemberCreation(gameObject, "AttributeText");
                     attributeToRemove = markedAttribute;
@@ -222,6 +256,7 @@ public class AcceptChanges : MonoBehaviour
             {
                 if (markedAttribute.Inner.Name == currentObjectName && markedAttribute.DeleteMark)
                 {
+                    LogSuggestionAccept("attribute", "delete", markedAttribute.Inner.Name, markedClass.Inner.Name);
                     // Accept attribute deletion - destroy the object
                     Destroy(gameObject);
                     attributeToRemove = markedAttribute;
@@ -240,6 +275,13 @@ public class AcceptChanges : MonoBehaviour
         {
             if (IsMatchingRelationship(currentObjectName, markedRelationship) && markedRelationship.CreateMark)
             {
+                LogSuggestionAccept(
+                    "relation",
+                    "create",
+                    $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}",
+                    fromClass: markedRelationship.Inner.FromClass,
+                    toClass: markedRelationship.Inner.ToClass);
+
                 var line = currentObject.GetComponent<UILineRenderer>();
                 if (line != null)
                 {
@@ -262,6 +304,13 @@ public class AcceptChanges : MonoBehaviour
         {
             if (IsMatchingRelationship(currentObjectName, markedRelationship) && markedRelationship.DeleteMark)
             {
+                LogSuggestionAccept(
+                    "relation",
+                    "delete",
+                    $"{markedRelationship.Inner.FromClass}->{markedRelationship.Inner.ToClass}",
+                    fromClass: markedRelationship.Inner.FromClass,
+                    toClass: markedRelationship.Inner.ToClass);
+
                 // Accept relationship deletion - destroy the object
                 Destroy(currentObject);
                 relationshipToRemove = markedRelationship;

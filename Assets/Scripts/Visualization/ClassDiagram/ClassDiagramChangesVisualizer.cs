@@ -10,6 +10,7 @@ using Visualization.ClassDiagram.Editors;
 using Visualization.ClassDiagram.MarkedDiagram;
 using Visualization.ClassDiagram.Relations;
 using Visualization.UI;
+using EditorChangesHistory;
 
 namespace Visualization.ClassDiagram
 {
@@ -281,6 +282,12 @@ namespace Visualization.ClassDiagram
         public void CleanupSuggestions()
         {
             if (diffResult == null) return;
+
+            UXEventLogger.DebugLog("suggestions_cleanup", new
+            {
+                classesCount = diffResult.ClassPoolMarked.GetClassPool().Count,
+                relationshipsCount = diffResult.RelationshipPoolMarked.GetAllRelationships().Count
+            });
             
             // Cleanup classes
             foreach (CDClassMarked cdClass in diffResult.ClassPoolMarked.GetClassPool())
@@ -329,6 +336,34 @@ namespace Visualization.ClassDiagram
                                 }
                                 if (methodDeleteButton != null) methodDeleteButton.gameObject.SetActive(false);
                                 if (methodEditButton != null) methodEditButton.gameObject.SetActive(false);
+                            }
+                        }
+                    }
+
+                    // Cleanup modified attributes
+                    foreach (MarkingDecorator<CDAttribute> cdAttribute in cdClass.WrappedAttributes)
+                    {
+                        if (cdAttribute.CreateMark)
+                        {
+                            editor.DeleteAttribute(cdClass.Inner.Name, cdAttribute.Inner.Name, false);
+                        }
+                        else if (cdAttribute.DeleteMark)
+                        {
+                            // Restore attribute color and hide buttons
+                            GameObject classGo = GameObject.Find(cdClass.Inner.Name);
+                            if (classGo != null)
+                            {
+                                var attributeDeleteButton = classGo.transform.Find($"Background/Attributes/AttributeLayoutGroup/{cdAttribute.Inner.Name}/VisualizationAcceptButton");
+                                var attributeEditButton = classGo.transform.Find($"Background/Attributes/AttributeLayoutGroup/{cdAttribute.Inner.Name}/VisualizationDeleteButton");
+                                var attributeText = classGo.transform.Find($"Background/Attributes/AttributeLayoutGroup/{cdAttribute.Inner.Name}/AttributeText");
+
+                                if (attributeText != null)
+                                {
+                                    attributeText.gameObject.GetComponentInChildren<TMP_Text>().color = Color.black;
+                                }
+
+                                if (attributeDeleteButton != null) attributeDeleteButton.gameObject.SetActive(false);
+                                if (attributeEditButton != null) attributeEditButton.gameObject.SetActive(false);
                             }
                         }
                     }

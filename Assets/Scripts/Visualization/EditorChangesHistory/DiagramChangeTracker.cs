@@ -43,6 +43,13 @@ namespace EditorChangesHistory
                 return;
 
             _changes.Add(changeEvent);
+            UXEventLogger.DebugLog("diagram_change_tracked", new
+            {
+                type = changeEvent.Type.ToString(),
+                timestamp = changeEvent.Timestamp.ToString("o"),
+                data = changeEvent.Data
+            });
+
             SuggestedDiagram.HandleNextSuggestionsRetrieval(changeEvent);
         }
 

@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
+using EditorChangesHistory;
 
 public class GPTMessage: BaseModel
 {
@@ -39,6 +40,11 @@ public class GPTMessage: BaseModel
 
         string jsonRequest = JsonUtility.ToJson(requestData);
         byte[] jsonToSend = Encoding.UTF8.GetBytes(jsonRequest);
+        UXEventLogger.DebugLog("llm_http_request", new
+        {
+            model = requestData.model,
+            request = jsonRequest
+        });
         
         using (UnityWebRequest webRequest = new UnityWebRequest(apiUrl, "POST"))
         {
@@ -56,19 +62,47 @@ public class GPTMessage: BaseModel
             if (webRequest.result == UnityWebRequest.Result.ConnectionError)
             {
                 Debug.LogError($"Connection error: {webRequest.error}");
+                UXEventLogger.DebugLog("llm_http_error", new
+                {
+                    type = "connection_error",
+                    error = webRequest.error
+                });
                 return $"Error: {webRequest.error}";
             }
             else if (webRequest.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogError($"Protocol error: {webRequest.error}");
                 Debug.LogError($"Response: {webRequest.downloadHandler.text}");
+                UXEventLogger.DebugLog("llm_http_error", new
+                {
+                    type = "protocol_error",
+                    error = webRequest.error,
+                    response = webRequest.downloadHandler.text
+                });
                 return $"Error: {webRequest.error}";
             }
             else
             {
                 string jsonResponse = webRequest.downloadHandler.text;
-                string parsedResponse = ParseResponse(jsonResponse);
-                return parsedResponse;
+                try
+                {
+                    string parsedResponse = ParseResponse(jsonResponse);
+                    UXEventLogger.DebugLog("llm_http_response", new
+                    {
+                        response = jsonResponse,
+                        parsed = parsedResponse
+                    });
+                    return parsedResponse;
+                }
+                catch (Exception ex)
+                {
+                    UXEventLogger.DebugLog("llm_response_parse_error", new
+                    {
+                        error = ex.ToString(),
+                        response = jsonResponse
+                    });
+                    throw;
+                }
             }
         }
     }
