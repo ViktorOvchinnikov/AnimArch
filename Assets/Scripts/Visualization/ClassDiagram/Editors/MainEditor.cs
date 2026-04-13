@@ -272,6 +272,83 @@ namespace Visualization.ClassDiagram.Editors
             }
         }
 
+        public virtual bool UpdateRelationType(GameObject relationObject, string newRelationType, string newRelationDirection, bool trackChanges = true)
+        {
+            if (relationObject == null || string.IsNullOrWhiteSpace(newRelationType))
+            {
+                return false;
+            }
+
+            RelationInDiagram relationInDiagram = DiagramPool.Instance.ClassDiagram.Relations
+                .Find(x => x.VisualObject != null && x.VisualObject.Equals(relationObject));
+            if (relationInDiagram == null || relationInDiagram.ParsedRelation == null)
+            {
+                return false;
+            }
+
+            Relation existingRelation = relationInDiagram.ParsedRelation;
+            string normalizedDirection = string.IsNullOrWhiteSpace(newRelationDirection) ? "Source -> Destination" : newRelationDirection;
+
+            if (string.Equals(existingRelation.PropertiesEaType, newRelationType, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(existingRelation.PropertiesDirection, normalizedDirection, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            bool duplicateExists = DiagramPool.Instance.ClassDiagram.Relations.Any(other =>
+            {
+                if (ReferenceEquals(other, relationInDiagram) || other?.ParsedRelation == null)
+                {
+                    return false;
+                }
+
+                bool sameDirection = (string.Equals(other.ParsedRelation.FromClass, existingRelation.FromClass, StringComparison.Ordinal) &&
+                                      string.Equals(other.ParsedRelation.ToClass, existingRelation.ToClass, StringComparison.Ordinal)) ||
+                                     (string.Equals(other.ParsedRelation.FromClass, existingRelation.ToClass, StringComparison.Ordinal) &&
+                                      string.Equals(other.ParsedRelation.ToClass, existingRelation.FromClass, StringComparison.Ordinal));
+
+                return sameDirection &&
+                       string.Equals(other.ParsedRelation.PropertiesEaType, newRelationType, StringComparison.OrdinalIgnoreCase) &&
+                       string.Equals(other.ParsedRelation.PropertiesDirection, normalizedDirection, StringComparison.OrdinalIgnoreCase);
+            });
+
+            if (duplicateExists)
+            {
+                return false;
+            }
+
+            string fromClass = existingRelation.FromClass;
+            string toClass = existingRelation.ToClass;
+            string sourceClass = string.IsNullOrWhiteSpace(existingRelation.SourceModelName) ? fromClass : existingRelation.SourceModelName;
+            string targetClass = string.IsNullOrWhiteSpace(existingRelation.TargetModelName) ? toClass : existingRelation.TargetModelName;
+
+            DeleteRelation(relationObject, false);
+
+            var updatedRelation = new Relation
+            {
+                ConnectorXmiId = Guid.NewGuid().ToString(),
+                SourceModelName = sourceClass,
+                TargetModelName = targetClass,
+                PropertiesEaType = newRelationType,
+                PropertiesDirection = normalizedDirection
+            };
+
+            CreateRelation(updatedRelation, false);
+
+            if (trackChanges)
+            {
+                string removeSerializedData = DiagramChangeSerializer.SerializeRemoveRelation(fromClass, toClass);
+                DiagramChangeEvent removeEvent = new DiagramChangeEvent(ChangeType.RemoveRelation, removeSerializedData);
+                DiagramChangeTracker.Instance.TrackChange(removeEvent);
+
+                string addSerializedData = DiagramChangeSerializer.SerializeAddRelation(updatedRelation.FromClass, updatedRelation.ToClass);
+                DiagramChangeEvent addEvent = new DiagramChangeEvent(ChangeType.AddRelation, addSerializedData);
+                DiagramChangeTracker.Instance.TrackChange(addEvent);
+            }
+
+            return true;
+        }
+
         public virtual void DeleteRelation(GameObject relation, bool trackChanges = true)
         {
             var relationInDiagram = DiagramPool.Instance.ClassDiagram.Relations

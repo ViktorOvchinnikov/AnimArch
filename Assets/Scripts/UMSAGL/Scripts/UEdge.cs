@@ -1,24 +1,35 @@
 ﻿using System.Collections;
 using System.Linq;
 using Microsoft.Msagl.Core.Layout;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
+using Visualization.ClassDiagram;
 using Visualization.UI;
 
 namespace UMSAGL.Scripts
 {
     public class UEdge : Unit
     {
+        private const string DeleteButtonObjectName = "DeleteButton";
+        private const string EditButtonObjectName = "EditButton";
+        private const float EditButtonOffsetX = 34f;
+
         public GameObject startCap;
         public GameObject endCap;
         public GameObject deleteButton;
+        public GameObject editButton;
         public bool dashed;
         public float segmentLength = 10f;
 
         private UILineRenderer _lineRenderer;
         private bool _dashed = false;
         private float _segmentLength = 0f;
+        private Transform _deleteButtonTransform;
+        private Transform _editButtonTransform;
+        private Button _deleteButton;
+        private Button _editButton;
 
         public Edge GraphEdge { get; set; }
 
@@ -93,6 +104,7 @@ namespace UMSAGL.Scripts
             SegmentLength = segmentLength;
             UpdateCaps();
             SetupDeleteButton();
+            SetupEditButton();
         }
 
         private static float CapAngle(Vector2 p1, Vector2 p2)
@@ -154,12 +166,18 @@ namespace UMSAGL.Scripts
             UpdateCap(endCap, "EndCap", Points[^1], Points[^2]);
         }
 
-        private void UpdateDeleteButtonPosition()
+        private void UpdateRelationButtonsPosition()
         {
+            if (Points == null || Points.Length < 2)
+            {
+                return;
+            }
+
             var prev = Points.First();
             var maxDistance = float.MinValue;
             Vector2 first = default;
             Vector2 second = default;
+
             foreach (var next in Points.Skip(1))
             {
                 var dis = Vector2.Distance(prev, next);
@@ -172,8 +190,17 @@ namespace UMSAGL.Scripts
 
                 prev = next;
             }
-            var buttonTransform = transform.Find("DeleteButton");
-            buttonTransform.localPosition = Vector2.Lerp(first, second, 0.5f);
+
+            Vector3 centerPosition = Vector2.Lerp(first, second, 0.5f);
+            if (_deleteButtonTransform != null)
+            {
+                _deleteButtonTransform.localPosition = centerPosition;
+            }
+
+            if (_editButtonTransform != null)
+            {
+                _editButtonTransform.localPosition = centerPosition + new Vector3(EditButtonOffsetX, 0f, 0f);
+            }
         }
 
         private void Update()
@@ -187,7 +214,8 @@ namespace UMSAGL.Scripts
                 Dashed = dashed;
             }
 
-            UpdateDeleteButtonPosition();
+            UpdateRelationButtonsPosition();
+            UpdateEditButtonVisibility();
         }
 
         public void ChangeColor(Color c)
@@ -213,16 +241,104 @@ namespace UMSAGL.Scripts
 
         public void SetupDeleteButton()
         {
+            if (_deleteButtonTransform != null)
+            {
+                return;
+            }
+
             var deleteButtonGo = Instantiate(deleteButton, transform);
-            deleteButtonGo.name = "DeleteButton";
-            var button = deleteButtonGo.transform.Find("DeleteButton").GetComponent<Button>();
-            button.onClick.AddListener(DeleteEdge);
-            button.gameObject.SetActive(UIEditorManager.Instance.active);
+            deleteButtonGo.name = DeleteButtonObjectName;
+            _deleteButtonTransform = deleteButtonGo.transform;
+
+            _deleteButton = deleteButtonGo.transform.Find("DeleteButton")?.GetComponent<Button>();
+            if (_deleteButton == null)
+            {
+                _deleteButton = deleteButtonGo.GetComponentInChildren<Button>(true);
+            }
+
+            if (_deleteButton != null)
+            {
+                _deleteButton.onClick.RemoveAllListeners();
+                _deleteButton.onClick.AddListener(DeleteEdge);
+                _deleteButton.gameObject.SetActive(UIEditorManager.Instance != null && UIEditorManager.Instance.active);
+            }
+        }
+
+        private void SetupEditButton()
+        {
+            if (_editButtonTransform != null)
+            {
+                return;
+            }
+
+            var editButtonPrefab = editButton != null ? editButton : deleteButton;
+            if (editButtonPrefab == null)
+            {
+                return;
+            }
+
+            var editButtonGo = Instantiate(editButtonPrefab, transform);
+            editButtonGo.name = EditButtonObjectName;
+            _editButtonTransform = editButtonGo.transform;
+
+            _editButton = editButtonGo.transform.Find("EditButton")?.GetComponent<Button>();
+            if (_editButton == null)
+            {
+                _editButton = editButtonGo.transform.Find("DeleteButton")?.GetComponent<Button>();
+            }
+
+            if (_editButton == null)
+            {
+                _editButton = editButtonGo.GetComponentInChildren<Button>(true);
+            }
+
+            if (_editButton == null)
+            {
+                return;
+            }
+
+            _editButton.gameObject.name = "EditRelationButton";
+            //ApplyEditButtonStyle(_editButton);
+            _editButton.onClick.RemoveAllListeners();
+            _editButton.onClick.AddListener(EditEdge);
+            _editButton.gameObject.SetActive(UIEditorManager.Instance != null && UIEditorManager.Instance.active);
+        }
+        
+        private void UpdateEditButtonVisibility()
+        {
+            if (_editButton == null)
+            {
+                return;
+            }
+
+            bool isInEditMode = UIEditorManager.Instance != null && UIEditorManager.Instance.active;
+            bool isSuggestionVisualized = IsSuggestionVisualizationActive();
+            _editButton.gameObject.SetActive(isInEditMode && !isSuggestionVisualized);
+        }
+
+        private bool IsSuggestionVisualizationActive()
+        {
+            Transform changesContainer = transform.Find("ChangesVisualization");
+            if (changesContainer == null)
+            {
+                return false;
+            }
+
+            Transform acceptButton = changesContainer.Find("AcceptButton");
+            Transform declineButton = changesContainer.Find("DeleteButton");
+            bool acceptVisible = acceptButton != null && acceptButton.gameObject.activeSelf;
+            bool declineVisible = declineButton != null && declineButton.gameObject.activeSelf;
+            return acceptVisible || declineVisible;
         }
 
         private void DeleteEdge()
         {
             UIEditorManager.Instance.confirmPopUp.ActivateCreation(delegate { UIEditorManager.Instance.mainEditor.DeleteRelation(gameObject); });
+        }
+
+        private void EditEdge()
+        {
+            UIEditorManager.Instance.BeginRelationTypeEdit(gameObject);
         }
     }
 }

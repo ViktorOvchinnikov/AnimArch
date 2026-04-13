@@ -88,7 +88,7 @@ namespace Visualization.UI
         private void OnSuggestionsButtonClicked()
         {
             TooltipManager.Instance.HideTooltip();
-            if (!ABTestManager.TryCompleteCurrentTask(out string message))
+            if (!ABTestManager.TryOpenCompleteTaskConfirmation(out string message))
             {
                 Debug.LogWarning(message);
                 return;

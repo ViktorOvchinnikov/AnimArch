@@ -56,6 +56,7 @@ MonoBehaviour:
   endCap: {fileID: 1018393394884562, guid: 5f27d2a82ed325f459afdb75a1cadaab, type: 3}
   deleteButton: {fileID: 6251318437781553612, guid: 0af9a63443d46fa478102c15c61f1519,
     type: 3}
+  editButton: {fileID: 6251318437781553612, guid: d40be1d9e75f4ff2accbc8416b3ae80d, type: 3}
   dashed: 0
   segmentLength: 10
 --- !u!222 &5564501330611826675

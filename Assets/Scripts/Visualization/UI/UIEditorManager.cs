@@ -4,6 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using Visualization.ClassDiagram;
+using Visualization.ClassDiagram.ComponentsInDiagram;
 using Visualization.ClassDiagram.Editors;
 using Visualization.ClassDiagram.Relations;
 using Visualization.UI.PopUps;
@@ -42,6 +43,7 @@ namespace Visualization.UI
 
         public State state;
         public Relation relation;
+        private RelationInDiagram _relationBeingEdited;
 
         public bool isNetworkDisabledOrIsServer()
         {
@@ -139,16 +141,71 @@ namespace Visualization.UI
 
         public void StartSelection(string newRelationType)
         {
-            var type = newRelationType.Split();
-            var relType = type.Length > 1 ? type[1] : type[0];
+            ParseRelationSelection(newRelationType, out string relType, out string direction);
+
             relation = new Relation
             {
                 ConnectorXmiId = Guid.NewGuid().ToString(),
                 PropertiesEaType = relType,
-                PropertiesDirection = type.Length > 1 ? "none" : "Source -> Destination"
+                PropertiesDirection = direction
             };
+
+            _relationBeingEdited = null;
             state = new SelectFirstState();
             MenuManager.Instance.isSelectingNode = true;
+        }
+
+        public void BeginRelationTypeEdit(GameObject relationObject)
+        {
+            if (relationObject == null)
+            {
+                return;
+            }
+
+            _relationBeingEdited = DiagramPool.Instance.ClassDiagram.Relations
+                .Find(item => item?.VisualObject != null && item.VisualObject.Equals(relationObject));
+
+            if (_relationBeingEdited == null)
+            {
+                return;
+            }
+
+            SelectionPopUp selectionPopUp = FindObjectOfType<SelectionPopUp>(true);
+            if (selectionPopUp == null)
+            {
+                Debug.LogError("SelectionPopUp is not found. Cannot edit relation type.");
+                _relationBeingEdited = null;
+                return;
+            }
+
+            Relation parsedRelation = _relationBeingEdited.ParsedRelation;
+            selectionPopUp.SelectRelationOption(parsedRelation?.PropertiesEaType, parsedRelation?.PropertiesDirection);
+            selectionPopUp.SetRelationEditMode(true);
+            selectionPopUp.ActivateCreation();
+        }
+
+        public bool TryApplyRelationTypeEdit(string selectedRelationType)
+        {
+            if (_relationBeingEdited == null)
+            {
+                return false;
+            }
+
+            ParseRelationSelection(selectedRelationType, out string relationType, out string relationDirection);
+            bool updated = mainEditor.UpdateRelationType(_relationBeingEdited.VisualObject, relationType, relationDirection);
+
+            if (!updated)
+            {
+                errorPopUp.ActivateCreation();
+            }
+
+            _relationBeingEdited = null;
+            return true;
+        }
+
+        public void CancelPendingRelationTypeEdit()
+        {
+            _relationBeingEdited = null;
         }
 
         public void SelectNode(GameObject selected)
@@ -164,14 +221,41 @@ namespace Visualization.UI
         public void EndSelection()
         {
             SetDiagramButtonsActive(true);
-            if (relation.SourceModelName != null)
+            if (relation != null &&
+                !string.IsNullOrWhiteSpace(relation.SourceModelName) &&
+                Animation.Animation.Instance != null)
             {
                 Animation.Animation.Instance.HighlightClass(relation.SourceModelName, false);
             }
-            MenuManager.Instance.isSelectingNode = false;
+
+            if (MenuManager.Instance != null)
+            {
+                MenuManager.Instance.isSelectingNode = false;
+            }
+
             relation = null;
             state = null;
-            GameObject.Find("SelectionPanel").SetActive(false);
+
+            GameObject selectionPanel = ResolveSelectionPanel();
+            if (selectionPanel != null)
+            {
+                selectionPanel.SetActive(false);
+            }
+        }
+
+        public void ShowSelectionPanel(bool active)
+        {
+            GameObject selectionPanel = ResolveSelectionPanel();
+            if (selectionPanel != null)
+            {
+                selectionPanel.SetActive(active);
+            }
+        }
+
+        private static GameObject ResolveSelectionPanel()
+        {
+            MediatorSelectionPanel mediatorSelectionPanel = FindObjectOfType<MediatorSelectionPanel>(true);
+            return mediatorSelectionPanel != null ? mediatorSelectionPanel.gameObject : null;
         }
 
         public void AddRelation()
@@ -191,6 +275,19 @@ namespace Visualization.UI
             
             mainEditor.CreateRelation(relation);
             EndSelection();
+        }
+
+        private static void ParseRelationSelection(string relationSelection, out string relationType, out string relationDirection)
+        {
+            string selectionValue = (relationSelection ?? string.Empty).Trim();
+            string[] tokens = selectionValue.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            relationType = tokens.Length > 1 ? tokens[^1] : selectionValue;
+            relationDirection = tokens.Length > 1 ? "none" : "Source -> Destination";
+
+            if (string.IsNullOrWhiteSpace(relationType))
+            {
+                relationType = "Association";
+            }
         }
 
         private void Update()
